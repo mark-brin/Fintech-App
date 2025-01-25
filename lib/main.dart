@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fintech_app/dashboard/dashboard.dart';
+import 'package:fintech_app/onboarding/onboarding.dart';
 
 void main() {
   runApp(const FintechApp());
@@ -11,8 +11,8 @@ class FintechApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Fintech App',
-      home: Scaffold(body: DashBoard()), //TODO: Change this to onboarding
       debugShowCheckedModeBanner: false,
+      home: Scaffold(body: OnboardingPage()),
     );
   }
 }
