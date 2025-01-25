@@ -11,8 +11,7 @@ class FintechApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Fintech App',
-      home: Scaffold(
-          body: DashBoard()), //TODO: Change this to onboarding while pushing
+      home: Scaffold(body: DashBoard()), //TODO: Change this to onboarding
       debugShowCheckedModeBanner: false,
     );
   }
