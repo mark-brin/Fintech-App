@@ -1,5 +1,5 @@
 name: fintech_app
-description: "A new Flutter project."
+description: ""
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,8 +9,9 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.2.2
-  cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.8
+  font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:
