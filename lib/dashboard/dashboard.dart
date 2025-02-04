@@ -18,6 +18,28 @@ class DashBoard extends StatelessWidget {
     }
   }
 
+  Future<String> getEmail() async {
+    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data['email'];
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
+  Future<String> getPhone() async {
+    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data['phone'];
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,73 +73,139 @@ class DashBoard extends StatelessWidget {
                 ),
                 Positioned(
                   top: 130,
-                  width: MediaQuery.of(context).size.width,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25),
+                    // width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            FutureBuilder<String>(
-                              future: getName(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  return Text(
-                                    'User',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 25,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                } else if (snapshot.hasData) {
-                                  return Text(
-                                    '${snapshot.data}',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 25,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                } else {
-                                  return Text(
-                                    'User',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 25,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            Text(
-                              'UPI ID',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FutureBuilder<String>(
+                                future: getName(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                      'User',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    return Text(
+                                      '${snapshot.data}',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else {
+                                    return Text(
+                                      'User',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
-                            ),
-                            Text(
-                              '',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 20,
-                                color: Colors.white,
+                              Text(
+                                'UPI ID:',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 20,
-                                color: Colors.white,
+                              Text(
+                                '**********@ebixcash',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
+                              FutureBuilder<String>(
+                                future: getEmail(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                      'Email',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    return Text(
+                                      '${snapshot.data}',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else {
+                                    return Text(
+                                      'Email',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              FutureBuilder<String>(
+                                future: getPhone(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                      '(Phone)',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    return Text(
+                                      '(${snapshot.data})',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else {
+                                    return Text(
+                                      '(Phone)',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        CircleAvatar(),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width -
+                              MediaQuery.of(context).size.width / 1.3,
+                          child: CircleAvatar(),
+                        ),
                       ],
                     ),
                   ),

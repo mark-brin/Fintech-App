@@ -68,14 +68,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           ),
           Positioned(
-            top: 265,
+            top: 300,
             left: -150,
             right: -150,
             child: Transform.rotate(
               angle: -0.5,
               child: ClipPath(
                 clipper: DiagonalWaveClipper(),
-                child: Container(height: 400, color: Colors.white),
+                child: Container(
+                  height: 330,
+                  color: Colors.white,
+                  child: Transform.rotate(
+                    angle: 0.5,
+                    child: Image.asset(
+                      fit: BoxFit.fitHeight,
+                      'assets/onboarding.png',
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
