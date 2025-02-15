@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/common/sidebar.dart';
 import 'package:fintech_app/common/navbar.dart';
+import 'package:fintech_app/common/sidebar.dart';
+import 'package:fintech_app/state/appState.dart';
+import 'package:fintech_app/dashboard/userDetail.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DashBoard extends StatelessWidget {
@@ -41,10 +44,49 @@ class DashBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //key: scaffoldKey,
       drawer: Sidebar(),
+      bottomNavigationBar: MainNavBar(),
       body: Stack(
         children: [
-          BottomNavBar(),
+          getPage(context, Provider.of<AppState>(context).pageIndex),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 25,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 7.5),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 5,
+                      spreadRadius: 3,
+                      offset: Offset(0, 1.5),
+                      color: Colors.black.withOpacity(0.3),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: BottomNavBar(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget body(BuildContext context) {
+    return Scaffold(
+      drawer: Sidebar(),
+      bottomNavigationBar: MainNavBar(),
+      body: Stack(
+        children: [
+          // BottomNavBar(),
           Column(
             children: [
               SizedBox(
@@ -86,38 +128,10 @@ class DashBoard extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  FutureBuilder<String>(
-                                    future: getName(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        return Text(
-                                          'User',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 25,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } else if (snapshot.hasData) {
-                                        return Text(
-                                          '${snapshot.data}',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 25,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } else {
-                                        return Text(
-                                          'User',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 25,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      }
-                                    },
+                                  UserDetail(
+                                    fontSize: 25,
+                                    altText: 'User',
+                                    detail: getName(),
                                   ),
                                   Text(
                                     'UPI ID:',
@@ -134,71 +148,17 @@ class DashBoard extends StatelessWidget {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  FutureBuilder<String>(
-                                    future: getEmail(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        return Text(
-                                          'Email',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } else if (snapshot.hasData) {
-                                        return Text(
-                                          '${snapshot.data}',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } else {
-                                        return Text(
-                                          'Email',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      }
-                                    },
+                                  SizedBox(height: 5),
+                                  UserDetail(
+                                    fontSize: 15,
+                                    altText: 'Email',
+                                    detail: getEmail(),
                                   ),
-                                  FutureBuilder<String>(
-                                    future: getPhone(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        return Text(
-                                          '(Phone)',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } else if (snapshot.hasData) {
-                                        return Text(
-                                          '(${snapshot.data})',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      } else {
-                                        return Text(
-                                          '(Phone)',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      }
-                                    },
+                                  SizedBox(height: 5),
+                                  UserDetail(
+                                    fontSize: 15,
+                                    altText: '(Phone)',
+                                    detail: getPhone(),
                                   ),
                                 ],
                               ),
@@ -219,35 +179,12 @@ class DashBoard extends StatelessWidget {
                       child: AppBar(
                         elevation: 0,
                         backgroundColor: Colors.transparent,
-                        title: FutureBuilder<String>(
-                          future: getName(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Text(
-                                'Welcome, User',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 23,
-                                  color: Colors.white,
-                                ),
-                              );
-                            } else if (snapshot.hasData) {
-                              return Text(
-                                'Welcome, ${snapshot.data}',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 23,
-                                  color: Colors.white,
-                                ),
-                              );
-                            } else {
-                              return Text(
-                                'Welcome, User',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 23,
-                                  color: Colors.white,
-                                ),
-                              );
-                            }
-                          },
+                        title: Text(
+                          'Welcome,',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 23,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -263,9 +200,15 @@ class DashBoard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         actionButton(
-                            context, FontAwesomeIcons.user, 'My Wallet'),
+                          context,
+                          FontAwesomeIcons.user,
+                          'My Wallet',
+                        ),
                         actionButton(
-                            context, FontAwesomeIcons.wallet, 'Transactions'),
+                          context,
+                          FontAwesomeIcons.wallet,
+                          'Transactions',
+                        ),
                       ],
                     ),
                     SizedBox(height: 50),
@@ -321,16 +264,37 @@ class DashBoard extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Icon(icon), Text(title)],
+          children: [
+            Icon(icon, color: Colors.blue[600]),
+            Text(
+              title,
+              style: GoogleFonts.montserrat(color: Colors.blue[600]),
+            )
+          ],
         ),
       ),
     );
   }
 
+  Widget getPage(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        return body(context);
+      case 1:
+        return Container();
+      case 2:
+        return Container();
+      case 3:
+        return Container();
+      default:
+        return Container();
+    }
+  }
+
   Widget rowButton(IconData icon, String title) {
     return Container(
-      width: 113,
-      height: 113,
+      width: 115,
+      height: 115,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -347,12 +311,15 @@ class DashBoard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.purple),
+          Icon(icon, color: Colors.blue[600]),
           SizedBox(height: 5),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 10, color: Colors.purple),
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              color: Colors.blue[600],
+            ),
           )
         ],
       ),
