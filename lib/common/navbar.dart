@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appState.dart';
+import 'package:fintech_app/state/appstate.dart';
 import 'package:fintech_app/common/mediaplayer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -71,7 +71,7 @@ class _MainNavBarState extends State<MainNavBar> {
                     ? FontAwesomeIcons.solidStar
                     : FontAwesomeIcons.star,
                 isCustomIcon: true,
-                "Visoquest",
+                "Tab 4",
                 style: GoogleFonts.montserrat(
                   fontSize: 9.8,
                   color: Colors.black,
@@ -115,15 +115,6 @@ class _MainNavBarState extends State<MainNavBar> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // isCustomIcon
-                  //     ? customIcon(
-                  //         context,
-                  //         icon: icon!,
-                  //         size: 20,
-                  //         isIcon: true,
-                  //         isEnable: index == state.pageIndex,
-                  //       )
-                  //     :
                   Icon(
                     iconData,
                     color: index == state.pageIndex
@@ -229,59 +220,6 @@ class _BottomNavBarState extends State<BottomNavBar>
                   );
                 },
               ),
-              // child: ClipRRect(
-              //   borderRadius: BorderRadius.circular(20),
-              //   child: Container(
-              //     padding: EdgeInsets.symmetric(vertical: 35, horizontal: 15),
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       children: [
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             IconButton(
-              //               onPressed: () {
-              //                 setState(
-              //                   () {
-              //                     isExpanded = !isExpanded;
-              //                     if (!isExpanded) {
-              //                       controller.reverse().whenComplete(
-              //                         () {
-              //                           _overlayEntry?.remove();
-              //                           _overlayEntry = null;
-              //                         },
-              //                       );
-              //                     }
-              //                   },
-              //                 );
-              //               },
-              //               icon: Icon(FontAwesomeIcons.chevronDown, size: 20),
-              //             ),
-              //             Container(),
-              //             IconButton(
-              //               onPressed: () {},
-              //               icon: Icon(
-              //                 size: 20,
-              //                 FontAwesomeIcons.ellipsisVertical,
-              //               ),
-              //             )
-              //           ],
-              //         ),
-              //         Container(
-              //           width: MediaQuery.of(context).size.width,
-              //           height: MediaQuery.of(context).size.height / 2.35,
-              //           decoration: BoxDecoration(
-              //             color: Colors.black,
-              //             borderRadius: BorderRadius.circular(15),
-              //           ),
-              //         ),
-              //         Divider(thickness: 0.15),
-              //         Container(),
-              //         Container(),
-              //       ],
-              //     ),
-              //   ),
-              // ),
             );
           },
         ),
@@ -322,14 +260,8 @@ class _BottomNavBarState extends State<BottomNavBar>
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              title: Text(
-                'Title',
-                style: GoogleFonts.montserrat(),
-              ),
-              subtitle: Text(
-                'SubTitle',
-                style: GoogleFonts.montserrat(),
-              ),
+              title: Text('Title', style: GoogleFonts.montserrat()),
+              subtitle: Text('SubTitle', style: GoogleFonts.montserrat()),
               trailing: Icon(size: 15, FontAwesomeIcons.chevronUp),
               onTap: () {
                 setState(

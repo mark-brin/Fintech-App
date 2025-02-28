@@ -21,22 +21,17 @@ class _MediaPlayerState extends State<MediaPlayer> {
   @override
   void initState() {
     super.initState();
-    audioPlayer.setSource(AssetSource('sampleAudio.mp3'));
-
+    audioPlayer.setSource(AssetSource('drums.mp3'));
     audioPlayer.onDurationChanged.listen((newDuration) {
-      setState(
-        () {
-          _duration = newDuration;
-        },
-      );
+      setState(() {
+        _duration = newDuration;
+      });
     });
 
     audioPlayer.onPositionChanged.listen((newPosition) {
-      setState(
-        () {
-          _position = newPosition;
-        },
-      );
+      setState(() {
+        _position = newPosition;
+      });
     });
   }
 
@@ -142,12 +137,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
                 children: [
                   IconButton(
                     onPressed: () async {
-                      await audioPlayer.seek(
-                        Duration(
-                          seconds: (_position.inSeconds - 10)
-                              .clamp(0, _duration.inSeconds),
-                        ),
-                      );
+                      await audioPlayer.seek(Duration(
+                        seconds: (_position.inSeconds - 10)
+                            .clamp(0, _duration.inSeconds),
+                      ));
                     },
                     icon: Icon(FontAwesomeIcons.backwardStep),
                   ),
@@ -172,12 +165,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
                   SizedBox(width: 17),
                   IconButton(
                     onPressed: () async {
-                      await audioPlayer.seek(
-                        Duration(
-                          seconds: (_position.inSeconds + 10)
-                              .clamp(0, _duration.inSeconds),
-                        ),
-                      );
+                      await audioPlayer.seek(Duration(
+                        seconds: (_position.inSeconds + 10)
+                            .clamp(0, _duration.inSeconds),
+                      ));
                     },
                     icon: Icon(FontAwesomeIcons.forwardStep),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fintech_app/state/appState.dart';
+import 'package:fintech_app/state/appstate.dart';
 import 'package:fintech_app/dashboard/dashboard.dart';
 
 void main() {

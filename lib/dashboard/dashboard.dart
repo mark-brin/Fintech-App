@@ -1,11 +1,17 @@
 import 'dart:convert';
+import 'package:fintech_app/dashboard/approval.dart';
+import 'package:fintech_app/dashboard/generate.dart';
+import 'package:fintech_app/dashboard/mandates.dart';
+import 'package:fintech_app/dashboard/paymoney.dart';
+import 'package:fintech_app/dashboard/request.dart';
+import 'package:fintech_app/dashboard/scan.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/common/navbar.dart';
 import 'package:fintech_app/common/sidebar.dart';
-import 'package:fintech_app/state/appState.dart';
+import 'package:fintech_app/state/appstate.dart';
 import 'package:fintech_app/dashboard/userDetail.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -44,7 +50,6 @@ class DashBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //key: scaffoldKey,
       drawer: Sidebar(),
       bottomNavigationBar: MainNavBar(),
       body: Stack(
@@ -215,21 +220,48 @@ class DashBoard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        rowButton(FontAwesomeIcons.moneyBill1Wave, 'Pay Money'),
                         rowButton(
-                            FontAwesomeIcons.sackDollar, 'Request\n Money'),
+                          context,
+                          FontAwesomeIcons.moneyBill1Wave,
+                          'Pay Money',
+                          PayMoney(),
+                        ),
                         rowButton(
-                            FontAwesomeIcons.userCheck, 'Approve\n to Pay'),
+                          context,
+                          FontAwesomeIcons.sackDollar,
+                          'Request\n Money',
+                          Requests(),
+                        ),
+                        rowButton(
+                          context,
+                          FontAwesomeIcons.userCheck,
+                          'Approve\n to Pay',
+                          Approvals(),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        rowButton(FontAwesomeIcons.file, 'Mandates'),
-                        rowButton(FontAwesomeIcons.qrcode, 'Scan\n & Pay'),
                         rowButton(
-                            FontAwesomeIcons.mobileScreenButton, 'Generate QR'),
+                          context,
+                          FontAwesomeIcons.file,
+                          'Mandates',
+                          Mandates(),
+                        ),
+                        rowButton(
+                          context,
+                          FontAwesomeIcons.qrcode,
+                          'Scan\n & Pay',
+                          ScanQR(),
+                        ),
+                        rowButton(
+                          context,
+                          FontAwesomeIcons.mobileScreenButton,
+                          'Generate QR',
+                          GenerateQR(),
+                        ),
                       ],
                     ),
                   ],
@@ -291,37 +323,50 @@ class DashBoard extends StatelessWidget {
     }
   }
 
-  Widget rowButton(IconData icon, String title) {
-    return Container(
-      width: 115,
-      height: 115,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(width: 0.5, color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: Offset(5, 5),
-            color: Colors.black.withOpacity(0.05),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.blue[600]),
-          SizedBox(height: 5),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
-              fontSize: 10,
-              color: Colors.blue[600],
+  Widget rowButton(
+    BuildContext context,
+    IconData icon,
+    String title,
+    Widget redirectWidget,
+  ) {
+    return TextButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => redirectWidget),
+        );
+      },
+      child: Container(
+        width: 115,
+        height: 115,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(width: 0.5, color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(5, 5),
+              color: Colors.black.withOpacity(0.05),
             ),
-          )
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.blue[600]),
+            SizedBox(height: 5),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                color: Colors.blue[600],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
