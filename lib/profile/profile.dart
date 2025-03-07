@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fintech_app/state/appstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -18,14 +20,14 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    futureUser = fetchUserData(); // Fetch user data on initialization
+    futureUser = fetchUserData();
   }
 
   Future<Map<String, dynamic>> fetchUserData() async {
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body); // Return parsed JSON as a Map
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to load user data');
     }
@@ -37,7 +39,18 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         toolbarHeight: 60,
         backgroundColor: Colors.purple,
-        leading: BackButton(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            var app = Provider.of<AppState>(context, listen: false);
+            app.pageController.animateToPage(
+              0,
+              curve: Curves.easeInOut,
+              duration: Duration(milliseconds: 300),
+            );
+            app.setPageIndex = 0;
+          },
+        ),
         title: Text(
           'My Details',
           style: GoogleFonts.montserrat(color: Colors.white),
@@ -47,7 +60,14 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: EdgeInsets.only(right: 10),
             child: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                //Navigator.pop(context);
+                var app = Provider.of<AppState>(context, listen: false);
+                app.pageController.animateToPage(
+                  0,
+                  curve: Curves.easeInOut,
+                  duration: Duration(milliseconds: 300),
+                );
+                app.setPageIndex = 0;
               },
               icon: Icon(FontAwesomeIcons.house, color: Colors.white),
             ),

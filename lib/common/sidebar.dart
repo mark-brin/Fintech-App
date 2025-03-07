@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:fintech_app/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fintech_app/state/appstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Sidebar extends StatefulWidget {
@@ -85,10 +86,8 @@ class _SidebarState extends State<Sidebar> {
             padding: EdgeInsets.only(left: 20),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
+                var app = Provider.of<AppState>(context, listen: false);
+                app.setPageIndex = 4;
               },
               child: Row(
                 children: [

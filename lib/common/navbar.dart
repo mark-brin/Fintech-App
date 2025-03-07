@@ -61,6 +61,7 @@ class _MainNavBarState extends State<MainNavBar> {
                 style: GoogleFonts.montserrat(
                   fontSize: 10,
                   color: Colors.black,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               SizedBox(width: 15),
@@ -71,11 +72,11 @@ class _MainNavBarState extends State<MainNavBar> {
                     ? FontAwesomeIcons.solidStar
                     : FontAwesomeIcons.star,
                 isCustomIcon: true,
-                "Tab 4",
+                "Transactions",
                 style: GoogleFonts.montserrat(
-                  fontSize: 9.8,
+                  fontSize: 8.25,
                   color: Colors.black,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -119,7 +120,7 @@ class _MainNavBarState extends State<MainNavBar> {
                     iconData,
                     color: index == state.pageIndex
                         ? Color(0xFF334D8F)
-                        : Theme.of(context).textTheme.bodySmall!.color,
+                        : Colors.grey,
                   ),
                   Text(
                     title,

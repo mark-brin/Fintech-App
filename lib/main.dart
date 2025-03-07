@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fintech_app/state/appstate.dart';
+//import 'package:fintech_app/auth/onboarding.dart';
 import 'package:fintech_app/dashboard/dashboard.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class FintechApp extends StatelessWidget {
         title: 'Fintech App',
         debugShowCheckedModeBanner: false,
         home: Scaffold(body: DashBoard()),
-        //home: Scaffold(body: OnboardingPage()),
+        // home: Scaffold(body: OnboardingPage()),
         theme: ThemeData(primarySwatch: Colors.blue),
       ),
     );

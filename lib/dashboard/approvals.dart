@@ -3,14 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/state/appstate.dart';
 
-class Mandates extends StatelessWidget {
-  const Mandates({super.key});
+class Approvals extends StatelessWidget {
+  const Approvals({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Mandates',
+          'Approvals',
           style: GoogleFonts.montserrat(),
         ),
         leading: IconButton(
