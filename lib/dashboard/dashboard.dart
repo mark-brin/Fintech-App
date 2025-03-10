@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,7 +78,7 @@ class DashBoard extends StatelessWidget {
                   Approvals(),
                   Mandates(),
                   ScanQR(),
-                  GenerateQR(globalKey: globalKey),
+                  GenerateQR(),
                 ],
               );
             },
@@ -223,64 +224,32 @@ class DashBoard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    actionButton(
-                      context,
-                      FontAwesomeIcons.user,
-                      'My Wallet',
-                      1,
-                    ),
-                    actionButton(
-                      context,
-                      FontAwesomeIcons.wallet,
-                      'Transactions',
-                      3,
-                    ),
+                    actionButton(context, FontAwesomeIcons.user, 'My Wallet', 1,
+                        'wallet'),
+                    actionButton(context, FontAwesomeIcons.wallet,
+                        'Transactions', 3, 'transactions'),
                   ],
                 ),
                 SizedBox(height: 35),
                 Row(
                   children: [
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.moneyBill1Wave,
-                      'Pay Money',
-                      5,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.sackDollar,
-                      'Request\n Money',
-                      6,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.userCheck,
-                      'Approve\n to Pay',
-                      7,
-                    ),
+                    rowButton(context, FontAwesomeIcons.moneyBill1Wave,
+                        'Pay Money', 5, 'pay'),
+                    rowButton(context, FontAwesomeIcons.sackDollar,
+                        'Request\n Money', 6, 'request'),
+                    rowButton(context, FontAwesomeIcons.userCheck,
+                        'Approve\n to Pay', 7, 'approvals'),
                   ],
                 ),
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.file,
-                      'Mandates',
-                      8,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.qrcode,
-                      'Scan\n & Pay',
-                      9,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.mobileScreenButton,
-                      'Generate QR',
-                      10,
-                    ),
+                    rowButton(context, FontAwesomeIcons.file, 'Mandates', 8,
+                        'mandates'),
+                    rowButton(context, FontAwesomeIcons.qrcode, 'Scan\n & Pay',
+                        9, 'scan'),
+                    rowButton(context, FontAwesomeIcons.mobileScreenButton,
+                        'Generate QR', 10, 'generate'),
                   ],
                 ),
               ],
@@ -291,13 +260,14 @@ class DashBoard extends StatelessWidget {
     );
   }
 
-  Widget actionButton(
-      BuildContext context, IconData icon, String title, int pageIndex) {
+  Widget actionButton(BuildContext context, IconData icon, String title,
+      int pageIndex, String route) {
     return TextButton(
-      onPressed: () {
-        var app = Provider.of<AppState>(context, listen: false);
-        app.setPageIndex = pageIndex;
-      },
+      onPressed: () => context.go(route),
+      //onPressed: () {
+      //  var app = Provider.of<AppState>(context, listen: false);
+      //  app.setPageIndex = pageIndex;
+      //},
       child: Container(
         height: 50,
         padding: EdgeInsets.symmetric(horizontal: 15),
@@ -329,22 +299,19 @@ class DashBoard extends StatelessWidget {
     );
   }
 
-  Widget rowButton(
-      BuildContext context, IconData icon, String title, int pageIndex) {
+  Widget rowButton(BuildContext context, IconData icon, String title,
+      int pageIndex, String route) {
     return TextButton(
-      onPressed: () {
-        var app = Provider.of<AppState>(context, listen: false);
-        app.setPageIndex = pageIndex;
-        //Navigator.push(
-        //  context,
-        //  MaterialPageRoute(builder: (context) => redirectWidget),
-        //);
-      },
+      onPressed: () => context.goNamed(route),
+      //onPressed: () {
+      //  var app = Provider.of<AppState>(context, listen: false);
+      //  app.setPageIndex = pageIndex;
+      //},
       child: Container(
         height: 110,
         width: MediaQuery.of(context).size.width / 3.75,
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(width: 0.5, color: Colors.grey[200]!),
           boxShadow: [

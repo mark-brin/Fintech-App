@@ -1,13 +1,14 @@
+// ignore_for_file: unused_import
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/state/appstate.dart';
 
 class GenerateQR extends StatelessWidget {
   final String? userId;
-  final GlobalKey globalKey;
-  const GenerateQR({super.key, required this.globalKey, this.userId});
+  const GenerateQR({super.key, this.userId});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,23 +17,24 @@ class GenerateQR extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            var app = Provider.of<AppState>(context, listen: false);
-            app.pageController.animateToPage(
-              0,
-              curve: Curves.easeInOut,
-              duration: Duration(milliseconds: 300),
-            );
-            app.setPageIndex = 0;
+            context.pop();
+            //var app = Provider.of<AppState>(context, listen: false);
+            //app.pageController.animateToPage(
+            //  0,
+            //  curve: Curves.easeInOut,
+            //  duration: Duration(milliseconds: 300),
+            //);
+            //app.setPageIndex = 0;
           },
         ),
       ),
       body: Container(
-        color: Theme.of(context).dividerColor.withOpacity(.2),
+        color: Colors.black,
+        // color: Theme.of(context).dividerColor.withOpacity(.2),
         alignment: Alignment.center,
         child: InkWell(
           onTap: () {},
           child: RepaintBoundary(
-            key: globalKey,
             child: Stack(
               alignment: Alignment.center,
               children: [

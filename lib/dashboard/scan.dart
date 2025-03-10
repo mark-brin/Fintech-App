@@ -109,7 +109,9 @@ class _ScanQRState extends State<ScanQR> {
                     },
                   );
                 } else {
-                  return GenerateQR(userId: userId, globalKey: globalKey);
+                  return GenerateQR(
+                    userId: userId,
+                  );
                 }
               },
             ),

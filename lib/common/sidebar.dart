@@ -153,6 +153,16 @@ class _SidebarState extends State<Sidebar> {
                     ),
                     _menuListRowButton(
                       isEnable: true,
+                      onPressed: () {
+                        final app =
+                            Provider.of<AppState>(context, listen: false);
+                        app.toggleDarkMode();
+                      },
+                      'Toggle Dark Mode',
+                      icon: FontAwesomeIcons.moon,
+                    ),
+                    _menuListRowButton(
+                      isEnable: true,
                       onPressed: () {},
                       'Settings and privacy',
                       icon: FontAwesomeIcons.gear,
