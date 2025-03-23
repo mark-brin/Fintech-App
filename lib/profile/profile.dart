@@ -36,9 +36,11 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         toolbarHeight: 60,
-        backgroundColor: Colors.purple,
+        backgroundColor: Color(0xFF334D8F),
+        elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -52,15 +54,17 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
         title: Text(
-          'My Details',
-          style: GoogleFonts.montserrat(color: Colors.white),
+          'My Profile',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
           Container(
             padding: EdgeInsets.only(right: 10),
             child: IconButton(
               onPressed: () {
-                //Navigator.pop(context);
                 var app = Provider.of<AppState>(context, listen: false);
                 app.pageController.animateToPage(
                   0,
@@ -69,30 +73,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
                 app.setPageIndex = 0;
               },
-              icon: Icon(FontAwesomeIcons.house, color: Colors.white),
+              icon: Icon(FontAwesomeIcons.house, color: Colors.white, size: 20),
             ),
           ),
         ],
       ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(radius: 75),
-            TextButton(
-              onPressed: () {},
-              child: Text('Update Photo', style: GoogleFonts.montserrat()),
-            ),
-            SizedBox(height: 15),
+            _buildProfileHeader(),
             FutureBuilder<Map<String, dynamic>>(
               future: futureUser,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF334D8F),
+                      ),
+                    ),
+                  );
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return _buildErrorState(snapshot.error.toString());
                 } else if (snapshot.hasData) {
                   final user = snapshot.data!;
                   final String name =
@@ -103,59 +106,405 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Name: $name\nPhone: $phone\nEmail: $email';
 
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          'Name: $name',
-                          style: GoogleFonts.montserrat(fontSize: 15),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          'Phone: $phone',
-                          style: GoogleFonts.montserrat(fontSize: 15),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          'Email: $email',
-                          style: GoogleFonts.montserrat(fontSize: 15),
-                        ),
-                      ),
-                      SizedBox(height: 35),
-                      Center(
-                        child: QrImageView(
-                          size: 200,
-                          data: qrData,
-                          version: QrVersions.auto,
-                        ),
-                      ),
+                      _buildProfileDetails(name, phone, email),
+                      _buildQRCodeSection(qrData),
+                      _buildActionButtons(),
                     ],
                   );
                 } else {
-                  return Text('No user data available');
+                  return _buildErrorState('No user data available');
                 }
               },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Color(0xFF334D8F),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 30),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 4,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    radius: 75,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: NetworkImage(
+                      'https://randomuser.me/api/portraits/men/1.jpg',
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.camera,
+                      color: Color(0xFF334D8F),
+                      size: 18,
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
             TextButton(
               onPressed: () {},
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.share),
-                  SizedBox(width: 5),
-                  Text('Share', style: GoogleFonts.montserrat()),
-                ],
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+              ),
+              child: Text(
+                'Update Photo',
+                style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withOpacity(0.9),
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProfileDetails(String name, String phone, String email) {
+    return Container(
+      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildProfileDetailItem(
+            FontAwesomeIcons.user,
+            'Full Name',
+            name,
+            Colors.blue[600]!,
+          ),
+          Divider(height: 30),
+          _buildProfileDetailItem(
+            FontAwesomeIcons.phone,
+            'Phone Number',
+            phone,
+            Colors.green[600]!,
+          ),
+          Divider(height: 30),
+          _buildProfileDetailItem(
+            FontAwesomeIcons.envelope,
+            'Email Address',
+            email,
+            Colors.red[600]!,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileDetailItem(
+      IconData icon, String label, String value, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: 18,
+          ),
+        ),
+        SizedBox(width: 15),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                value,
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          icon: Icon(
+            FontAwesomeIcons.penToSquare,
+            color: Colors.grey[400],
+            size: 16,
+          ),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQRCodeSection(String qrData) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.qrcode,
+                color: Color(0xFF334D8F),
+                size: 20,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'My QR Code',
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Container(
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                color: Colors.grey[200]!,
+                width: 1,
+              ),
+            ),
+            child: QrImageView(
+              size: 200,
+              data: qrData,
+              version: QrVersions.auto,
+              backgroundColor: Colors.white,
+              foregroundColor: Color(0xFF334D8F),
+              errorCorrectionLevel: QrErrorCorrectLevel.H,
+              embeddedImage: AssetImage('assets/app_icon.png'),
+              embeddedImageStyle: QrEmbeddedImageStyle(
+                size: Size(40, 40),
+              ),
+            ),
+          ),
+          SizedBox(height: 15),
+          Text(
+            'Scan this code to share your contact details',
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Container(
+      margin: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          _buildActionButton(
+            'Share Profile',
+            FontAwesomeIcons.shareNodes,
+            Colors.blue[600]!,
+          ),
+          SizedBox(height: 15),
+          _buildActionButton(
+            'Privacy Settings',
+            FontAwesomeIcons.lock,
+            Colors.green[600]!,
+          ),
+          SizedBox(height: 15),
+          _buildActionButton(
+            'Help & Support',
+            FontAwesomeIcons.circleQuestion,
+            Colors.orange[600]!,
+          ),
+          SizedBox(height: 15),
+          _buildActionButton(
+            'Logout',
+            FontAwesomeIcons.rightFromBracket,
+            Colors.red[600]!,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String label, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: 18,
+          ),
+        ),
+        title: Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[800],
+          ),
+        ),
+        trailing: Icon(
+          FontAwesomeIcons.chevronRight,
+          color: Colors.grey[400],
+          size: 16,
+        ),
+        onTap: () {},
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String message) {
+    return Container(
+      padding: EdgeInsets.all(30),
+      child: Column(
+        children: [
+          Icon(
+            FontAwesomeIcons.circleExclamation,
+            color: Colors.red[400],
+            size: 50,
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Error Loading Profile',
+            style: GoogleFonts.montserrat(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800],
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            message,
+            style: GoogleFonts.montserrat(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                futureUser = fetchUserData();
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF334D8F),
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              'Try Again',
+              style: GoogleFonts.montserrat(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

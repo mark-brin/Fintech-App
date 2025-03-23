@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fintech_app/common/splash.dart';
 import 'package:fintech_app/state/appstate.dart';
-//import 'package:fintech_app/auth/onboarding.dart';
-import 'package:fintech_app/dashboard/dashboard.dart';
 
 void main() {
   runApp(const FintechApp());
@@ -13,12 +12,14 @@ class FintechApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider<AppState>(create: (_) => AppState())],
+      providers: [
+        ChangeNotifierProvider<AppState>(create: (_) => AppState()),
+        //ChangeNotifierProvider<AuthState>(create: (_) => AuthState()),
+      ],
       child: MaterialApp(
         title: 'Fintech App',
         debugShowCheckedModeBanner: false,
-        home: Scaffold(body: DashBoard()),
-        // home: Scaffold(body: OnboardingPage()),
+        home: Scaffold(body: SplashPage()),
         theme: ThemeData(primarySwatch: Colors.blue),
       ),
     );

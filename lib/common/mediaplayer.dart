@@ -66,115 +66,235 @@ class _MediaPlayerState extends State<MediaPlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 35, horizontal: 15),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.grey[900]!, Colors.grey[850]!, Colors.grey[800]!],
+          ),
+        ),
+        child: SafeArea(
+          child: Container(
+            padding: EdgeInsets.all(15),
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  IconButton(
-                    onPressed: widget.onPressed,
-                    icon: Icon(FontAwesomeIcons.chevronDown, size: 20),
-                  ),
-                  Container(),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      size: 20,
-                      FontAwesomeIcons.ellipsisVertical,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height / 12.5),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2.35,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: NetworkImage(
-                      'https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-                    ),
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              SizedBox(height: 5),
-              Divider(thickness: 0.15),
-              SizedBox(height: 20),
-              Text(
-                _getFileName(audioPath),
-                style: GoogleFonts.montserrat(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              SizedBox(height: 10),
-              Slider(
-                min: 0.0,
-                max: _duration.inSeconds.toDouble(),
-                value: _position.inSeconds.toDouble(),
-                onChanged: (double value) async {
-                  final position = Duration(seconds: value.toInt());
-                  await audioPlayer.seek(position);
-                  await audioPlayer.resume();
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_formatDuration(_position)),
-                  Text(_formatDuration(_duration - _position)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      await audioPlayer.seek(Duration(
-                        seconds: (_position.inSeconds - 10)
-                            .clamp(0, _duration.inSeconds),
-                      ));
-                    },
-                    icon: Icon(FontAwesomeIcons.backwardStep),
-                  ),
-                  SizedBox(width: 17),
-                  IconButton(
-                    onPressed: _playPauseAudio,
-                    icon: Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.blue[600],
-                        borderRadius: BorderRadius.circular(40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: widget.onPressed,
+                        icon: Icon(
+                          FontAwesomeIcons.chevronDown,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                       ),
-                      child: Icon(
-                        isPlaying
-                            ? FontAwesomeIcons.pause
-                            : FontAwesomeIcons.play,
-                        color: Colors.white,
+                      Text(
+                        "NOW PLAYING",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white70,
+                          letterSpacing: 1.5,
+                        ),
                       ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          FontAwesomeIcons.ellipsisVertical,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height / 16),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.2,
+                    height: MediaQuery.of(context).size.height / 2.35,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 15,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                          'https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  SizedBox(width: 17),
-                  IconButton(
-                    onPressed: () async {
-                      await audioPlayer.seek(Duration(
-                        seconds: (_position.inSeconds + 10)
-                            .clamp(0, _duration.inSeconds),
-                      ));
-                    },
-                    icon: Icon(FontAwesomeIcons.forwardStep),
+                  SizedBox(height: 30),
+                  Text(
+                    _getFileName(audioPath),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Artist Name",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  SliderTheme(
+                    data: SliderThemeData(
+                      trackHeight: 4,
+                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 14),
+                      activeTrackColor: Colors.blue[400],
+                      inactiveTrackColor: Colors.grey[700],
+                      thumbColor: Colors.white,
+                      overlayColor: Colors.blue.withOpacity(0.2),
+                    ),
+                    child: Slider(
+                      min: 0.0,
+                      max: _duration.inSeconds.toDouble(),
+                      value: _position.inSeconds.toDouble(),
+                      onChanged: (double value) async {
+                        final position = Duration(seconds: value.toInt());
+                        await audioPlayer.seek(position);
+                        await audioPlayer.resume();
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _formatDuration(_position),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        Text(
+                          _formatDuration(_duration - _position),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        iconSize: 32,
+                        onPressed: () async {
+                          await audioPlayer.seek(Duration(
+                            seconds: (_position.inSeconds - 10)
+                                .clamp(0, _duration.inSeconds),
+                          ));
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.backward,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      GestureDetector(
+                        onTap: _playPauseAudio,
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.blue[400]!, Colors.blue[700]!],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(40),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blue.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isPlaying
+                                ? FontAwesomeIcons.pause
+                                : FontAwesomeIcons.play,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      IconButton(
+                        iconSize: 32,
+                        onPressed: () async {
+                          await audioPlayer.seek(Duration(
+                            seconds: (_position.inSeconds + 10)
+                                .clamp(0, _duration.inSeconds),
+                          ));
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.forward,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          FontAwesomeIcons.repeat,
+                          color: Colors.white70,
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          FontAwesomeIcons.heart,
+                          color: Colors.white70,
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          FontAwesomeIcons.share,
+                          color: Colors.white70,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

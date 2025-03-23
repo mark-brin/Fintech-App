@@ -82,31 +82,31 @@ class DashBoard extends StatelessWidget {
               );
             },
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 25,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 7.5),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 5,
-                      spreadRadius: 3,
-                      offset: Offset(0, 1.5),
-                      color: Colors.black.withOpacity(0.3),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: BottomNavBar(),
-                ),
-              ),
-            ),
-          ),
+          //Positioned(
+          //  left: 0,
+          //  right: 0,
+          //  bottom: 25,
+          //  child: Padding(
+          //    padding: EdgeInsets.symmetric(horizontal: 7.5),
+          //    child: Container(
+          //      decoration: BoxDecoration(
+          //        borderRadius: BorderRadius.circular(50),
+          //        boxShadow: [
+          //          BoxShadow(
+          //            blurRadius: 5,
+          //            spreadRadius: 3,
+          //            offset: Offset(0, 1.5),
+          //            color: Colors.black.withOpacity(0.3),
+          //          ),
+          //        ],
+          //      ),
+          //      child: ClipRRect(
+          //        borderRadius: BorderRadius.circular(50),
+          //        child: BottomNavBar(),
+          //      ),
+          //    ),
+          //  ),
+          //),
         ],
       ),
     );
@@ -114,7 +114,7 @@ class DashBoard extends StatelessWidget {
 
   Widget body(BuildContext context) {
     return Scaffold(
-      drawer: Sidebar(),
+      //drawer: Sidebar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -130,11 +130,23 @@ class DashBoard extends StatelessWidget {
                             Container(
                               height: MediaQuery.of(context).size.height / 2.5,
                               decoration: BoxDecoration(
+                                // gradient: LinearGradient(
+                                //   begin: Alignment.topLeft,
+                                //   end: Alignment.bottomRight,
+                                //   colors: [
+                                //     Colors.blue[800]!,
+                                //     Colors.blue[500]!
+                                //   ],
+                                // ),
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: NetworkImage(
                                     'https://images.pexels.com/photos/30210691/pexels-photo-30210691/free-photo-of-majestic-mountain-landscape-in-north-macedonia.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
                                   ),
+                                ),
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(25),
+                                  bottomRight: Radius.circular(25),
                                 ),
                               ),
                             ),
@@ -146,7 +158,7 @@ class DashBoard extends StatelessWidget {
                   Positioned(
                     top: 130,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -156,7 +168,7 @@ class DashBoard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 UserDetail(
-                                  fontSize: 25,
+                                  fontSize: 28,
                                   altText: 'User',
                                   detail: getName(),
                                 ),
@@ -164,18 +176,18 @@ class DashBoard extends StatelessWidget {
                                   'UPI ID:',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 15,
-                                    color: Colors.white,
+                                    color: Colors.white.withOpacity(0.9),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 Text(
                                   '**********@ebixcash',
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     color: Colors.white,
                                   ),
                                 ),
-                                SizedBox(height: 5),
+                                SizedBox(height: 10),
                                 UserDetail(
                                   fontSize: 15,
                                   altText: 'Email',
@@ -193,7 +205,15 @@ class DashBoard extends StatelessWidget {
                           SizedBox(
                             width: MediaQuery.of(context).size.width -
                                 MediaQuery.of(context).size.width / 1.3,
-                            child: CircleAvatar(),
+                            child: CircleAvatar(
+                              radius: 37.5,
+                              backgroundColor: Colors.white.withOpacity(0.2),
+                              child: Icon(
+                                size: 37.5,
+                                FontAwesomeIcons.user,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -209,7 +229,8 @@ class DashBoard extends StatelessWidget {
                       title: Text(
                         'Welcome,',
                         style: GoogleFonts.montserrat(
-                          fontSize: 23,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
                           color: Colors.white,
                         ),
                       ),
@@ -218,72 +239,97 @@ class DashBoard extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    actionButton(
-                      context,
-                      FontAwesomeIcons.user,
-                      'My Wallet',
-                      1,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 1.5,
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  Text(
+                    'Quick Actions',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
                     ),
-                    actionButton(
-                      context,
-                      FontAwesomeIcons.wallet,
-                      'Transactions',
-                      3,
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      actionButton(
+                        context,
+                        FontAwesomeIcons.wallet,
+                        'My Wallet',
+                        1,
+                      ),
+                      actionButton(
+                        context,
+                        FontAwesomeIcons.clockRotateLeft,
+                        'Transactions',
+                        3,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Services',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
                     ),
-                  ],
-                ),
-                SizedBox(height: 35),
-                Row(
-                  children: [
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.moneyBill1Wave,
-                      'Pay Money',
-                      5,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.sackDollar,
-                      'Request\n Money',
-                      6,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.userCheck,
-                      'Approve\n to Pay',
-                      7,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.file,
-                      'Mandates',
-                      8,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.qrcode,
-                      'Scan\n & Pay',
-                      9,
-                    ),
-                    rowButton(
-                      context,
-                      FontAwesomeIcons.mobileScreenButton,
-                      'Generate QR',
-                      10,
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      rowButton(
+                        context,
+                        FontAwesomeIcons.moneyBill1Wave,
+                        'Pay Money',
+                        5,
+                      ),
+                      rowButton(
+                        context,
+                        FontAwesomeIcons.sackDollar,
+                        'Request\n Money',
+                        6,
+                      ),
+                      rowButton(
+                        context,
+                        FontAwesomeIcons.userCheck,
+                        'Approve\n to Pay',
+                        7,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    children: [
+                      rowButton(
+                        context,
+                        FontAwesomeIcons.file,
+                        'Mandates',
+                        8,
+                      ),
+                      rowButton(
+                        context,
+                        FontAwesomeIcons.qrcode,
+                        'Scan\n & Pay',
+                        9,
+                      ),
+                      rowButton(
+                        context,
+                        FontAwesomeIcons.mobileScreenButton,
+                        'Generate QR',
+                        10,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -299,29 +345,39 @@ class DashBoard extends StatelessWidget {
         app.setPageIndex = pageIndex;
       },
       child: Container(
-        height: 50,
+        height: 60,
         padding: EdgeInsets.symmetric(horizontal: 15),
         width: MediaQuery.of(context).size.width / 2.5,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(width: 0.5, color: Colors.grey[200]!),
           boxShadow: [
             BoxShadow(
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: Offset(5, 5),
-              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              spreadRadius: 1,
+              offset: Offset(0, 2),
+              color: Colors.black.withOpacity(0.08),
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(icon, color: Colors.blue[600]),
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: Colors.blue[600]),
+            ),
             Text(
               title,
-              style: GoogleFonts.montserrat(color: Colors.blue[600]),
+              style: GoogleFonts.montserrat(
+                color: Colors.blue[600],
+                fontWeight: FontWeight.w500,
+              ),
             )
           ],
         ),
@@ -335,38 +391,42 @@ class DashBoard extends StatelessWidget {
       onPressed: () {
         var app = Provider.of<AppState>(context, listen: false);
         app.setPageIndex = pageIndex;
-        //Navigator.push(
-        //  context,
-        //  MaterialPageRoute(builder: (context) => redirectWidget),
-        //);
       },
       child: Container(
-        height: 110,
-        width: MediaQuery.of(context).size.width / 3.75,
+        height: 100,
+        width: MediaQuery.of(context).size.width / 3.8,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(width: 0.5, color: Colors.grey[200]!),
           boxShadow: [
             BoxShadow(
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: Offset(5, 5),
-              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              spreadRadius: 1,
+              offset: Offset(0, 2),
+              color: Colors.black.withOpacity(0.08),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.blue[600]),
-            SizedBox(height: 5),
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: Colors.blue[600]),
+            ),
+            SizedBox(height: 7),
             Text(
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
-                fontSize: 10,
+                fontSize: 11,
                 color: Colors.blue[600],
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
