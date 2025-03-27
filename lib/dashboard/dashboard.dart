@@ -82,31 +82,6 @@ class DashBoard extends StatelessWidget {
               );
             },
           ),
-          //Positioned(
-          //  left: 0,
-          //  right: 0,
-          //  bottom: 25,
-          //  child: Padding(
-          //    padding: EdgeInsets.symmetric(horizontal: 7.5),
-          //    child: Container(
-          //      decoration: BoxDecoration(
-          //        borderRadius: BorderRadius.circular(50),
-          //        boxShadow: [
-          //          BoxShadow(
-          //            blurRadius: 5,
-          //            spreadRadius: 3,
-          //            offset: Offset(0, 1.5),
-          //            color: Colors.black.withOpacity(0.3),
-          //          ),
-          //        ],
-          //      ),
-          //      child: ClipRRect(
-          //        borderRadius: BorderRadius.circular(50),
-          //        child: BottomNavBar(),
-          //      ),
-          //    ),
-          //  ),
-          //),
         ],
       ),
     );
@@ -114,139 +89,123 @@ class DashBoard extends StatelessWidget {
 
   Widget body(BuildContext context) {
     return Scaffold(
-      //drawer: Sidebar(),
+      drawer: Sidebar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 2.5,
-              child: Stack(
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF334D8F), Color(0xFF4A6FD1)],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
                 children: [
-                  Positioned.fill(
+                  AppBar(
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    title: Text(
+                      'Welcome,',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          children: [
-                            Container(
-                              height: MediaQuery.of(context).size.height / 2.5,
-                              decoration: BoxDecoration(
-                                // gradient: LinearGradient(
-                                //   begin: Alignment.topLeft,
-                                //   end: Alignment.bottomRight,
-                                //   colors: [
-                                //     Colors.blue[800]!,
-                                //     Colors.blue[500]!
-                                //   ],
-                                // ),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                    'https://images.pexels.com/photos/30210691/pexels-photo-30210691/free-photo-of-majestic-mountain-landscape-in-north-macedonia.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(25),
-                                  bottomRight: Radius.circular(25),
+                        UserDetail(
+                          fontSize: 27,
+                          altText: 'User',
+                          detail: getName(),
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                child: Icon(
+                                  FontAwesomeIcons.user,
+                                  color: Colors.white,
+                                  size: 30,
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 15),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'UPI ID: **********@ebixcash',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    FutureBuilder<String>(
+                                      future: getEmail(),
+                                      builder: (context, snapshot) {
+                                        return Text(
+                                          snapshot.data ?? 'Loading...',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 12,
+                                            color:
+                                                Colors.white.withOpacity(0.7),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(height: 5),
+                                    FutureBuilder<String>(
+                                      future: getPhone(),
+                                      builder: (context, snapshot) {
+                                        return Text(
+                                          snapshot.data ?? 'Loading...',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 12,
+                                            color:
+                                                Colors.white.withOpacity(0.7),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 130,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                UserDetail(
-                                  fontSize: 28,
-                                  altText: 'User',
-                                  detail: getName(),
-                                ),
-                                Text(
-                                  'UPI ID:',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 15,
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  '**********@ebixcash',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                UserDetail(
-                                  fontSize: 15,
-                                  altText: 'Email',
-                                  detail: getEmail(),
-                                ),
-                                SizedBox(height: 5),
-                                UserDetail(
-                                  fontSize: 15,
-                                  altText: '(Phone)',
-                                  detail: getPhone(),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width -
-                                MediaQuery.of(context).size.width / 1.3,
-                            child: CircleAvatar(
-                              radius: 37.5,
-                              backgroundColor: Colors.white.withOpacity(0.2),
-                              child: Icon(
-                                size: 37.5,
-                                FontAwesomeIcons.user,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: AppBar(
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      title: Text(
-                        'Welcome,',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 1.5,
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
                   Text(
                     'Quick Actions',
                     style: GoogleFonts.montserrat(
@@ -255,25 +214,34 @@ class DashBoard extends StatelessWidget {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      actionButton(
+                      buildQuickActionCard(
                         context,
                         FontAwesomeIcons.wallet,
                         'My Wallet',
+                        Colors.blue[700]!,
                         1,
                       ),
-                      actionButton(
+                      buildQuickActionCard(
                         context,
                         FontAwesomeIcons.clockRotateLeft,
                         'Transactions',
+                        Colors.purple[700]!,
                         3,
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
                     'Services',
                     style: GoogleFonts.montserrat(
@@ -282,50 +250,35 @@ class DashBoard extends StatelessWidget {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Row(
+                  SizedBox(height: 15),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.1,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
                     children: [
-                      rowButton(
-                        context,
-                        FontAwesomeIcons.moneyBill1Wave,
-                        'Pay Money',
-                        5,
-                      ),
-                      rowButton(
-                        context,
-                        FontAwesomeIcons.sackDollar,
-                        'Request\n Money',
-                        6,
-                      ),
-                      rowButton(
-                        context,
-                        FontAwesomeIcons.userCheck,
-                        'Approve\n to Pay',
-                        7,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    children: [
-                      rowButton(
-                        context,
-                        FontAwesomeIcons.file,
-                        'Mandates',
-                        8,
-                      ),
-                      rowButton(
-                        context,
-                        FontAwesomeIcons.qrcode,
-                        'Scan\n & Pay',
-                        9,
-                      ),
-                      rowButton(
-                        context,
-                        FontAwesomeIcons.mobileScreenButton,
-                        'Generate QR',
-                        10,
-                      ),
+                      _buildServiceCard(
+                          context,
+                          FontAwesomeIcons.moneyBill1Wave,
+                          'Pay Money',
+                          Colors.green[600]!,
+                          5),
+                      _buildServiceCard(context, FontAwesomeIcons.sackDollar,
+                          'Request Money', Colors.orange[600]!, 6),
+                      _buildServiceCard(context, FontAwesomeIcons.userCheck,
+                          'Approvals', Colors.purple[600]!, 7),
+                      _buildServiceCard(context, FontAwesomeIcons.file,
+                          'Mandates', Colors.blue[600]!, 8),
+                      _buildServiceCard(context, FontAwesomeIcons.qrcode,
+                          'Scan QR', Colors.red[600]!, 9),
+                      _buildServiceCard(
+                          context,
+                          FontAwesomeIcons.mobileScreenButton,
+                          'Generate QR',
+                          Colors.teal[600]!,
+                          10),
                     ],
                   ),
                 ],
@@ -337,74 +290,68 @@ class DashBoard extends StatelessWidget {
     );
   }
 
-  Widget actionButton(
-      BuildContext context, IconData icon, String title, int pageIndex) {
-    return TextButton(
-      onPressed: () {
+  Widget buildQuickActionCard(BuildContext context, IconData icon, String label,
+      Color color, int pageIndex) {
+    return InkWell(
+      onTap: () {
         var app = Provider.of<AppState>(context, listen: false);
         app.setPageIndex = pageIndex;
       },
       child: Container(
-        height: 60,
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        width: MediaQuery.of(context).size.width / 2.5,
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        width: MediaQuery.of(context).size.width / 2.35,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(width: 0.5, color: Colors.grey[200]!),
+          borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
               spreadRadius: 1,
-              offset: Offset(0, 2),
-              color: Colors.black.withOpacity(0.08),
             ),
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
-                shape: BoxShape.circle,
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: Colors.blue[600]),
+              child: Icon(icon, color: color, size: 22),
             ),
+            SizedBox(width: 10.5),
             Text(
-              title,
+              label,
               style: GoogleFonts.montserrat(
-                color: Colors.blue[600],
-                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget rowButton(
-      BuildContext context, IconData icon, String title, int pageIndex) {
-    return TextButton(
-      onPressed: () {
+  Widget _buildServiceCard(BuildContext context, IconData icon, String title,
+      Color color, int pageIndex) {
+    return InkWell(
+      onTap: () {
         var app = Provider.of<AppState>(context, listen: false);
         app.setPageIndex = pageIndex;
       },
       child: Container(
-        height: 100,
-        width: MediaQuery.of(context).size.width / 3.8,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(width: 0.5, color: Colors.grey[200]!),
+          borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
               spreadRadius: 1,
-              offset: Offset(0, 2),
-              color: Colors.black.withOpacity(0.08),
             ),
           ],
         ),
@@ -412,21 +359,21 @@ class DashBoard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
-                shape: BoxShape.circle,
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: Colors.blue[600]),
+              child: Icon(icon, color: color, size: 22),
             ),
-            SizedBox(height: 7),
+            SizedBox(height: 8),
             Text(
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
-                fontSize: 11,
-                color: Colors.blue[600],
-                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
               ),
             ),
           ],

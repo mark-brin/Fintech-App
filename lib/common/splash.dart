@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/auth/onboarding.dart';
 
 class SplashPage extends StatefulWidget {
@@ -60,9 +61,8 @@ class _SplashPageState extends State<SplashPage> {
               SizedBox(width: 15),
               Text(
                 "Fintech App",
-                style: TextStyle(
+                style: GoogleFonts.montserrat(
                   fontSize: 23.5,
-                  fontFamily: "Poppins",
                   fontWeight: FontWeight.w500,
                 ),
               ),
