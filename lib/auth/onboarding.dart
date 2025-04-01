@@ -109,7 +109,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             ? 'Next'
                             : 'Get Started',
                         style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: 17,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -128,14 +128,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Seamless image integration
-        Container(
+        SizedBox(
           height: 300,
           width: double.infinity,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Gradient overlay at the bottom to blend with background
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
@@ -151,8 +149,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                 ),
               ),
-
-              // Image with blend mode
               Positioned.fill(
                 child: ShaderMask(
                   shaderCallback: (Rect bounds) {
@@ -170,8 +166,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                 ),
               ),
-
-              // Subtle overlay to enhance image visibility
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
@@ -190,7 +184,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ),
         SizedBox(height: 40),
-        // Title
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Text(
@@ -204,7 +197,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ),
         SizedBox(height: 16),
-        // Subtitle
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 40),
           child: Text(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fintech_app/common/mediaplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -143,9 +144,9 @@ class DashBoard extends StatelessWidget {
                                 radius: 30,
                                 backgroundColor: Colors.white.withOpacity(0.2),
                                 child: Icon(
+                                  size: 30,
                                   FontAwesomeIcons.user,
                                   color: Colors.white,
-                                  size: 30,
                                 ),
                               ),
                               SizedBox(width: 15),
@@ -246,8 +247,8 @@ class DashBoard extends StatelessWidget {
                     'Services',
                     style: GoogleFonts.montserrat(
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
                       color: Colors.grey[800],
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 15),
@@ -259,21 +260,17 @@ class DashBoard extends StatelessWidget {
                     crossAxisSpacing: 15,
                     mainAxisSpacing: 15,
                     children: [
-                      _buildServiceCard(
-                          context,
-                          FontAwesomeIcons.moneyBill1Wave,
-                          'Pay Money',
-                          Colors.green[600]!,
-                          5),
-                      _buildServiceCard(context, FontAwesomeIcons.sackDollar,
+                      buildServiceCard(context, FontAwesomeIcons.moneyBill1Wave,
+                          'Pay Money', Colors.green[600]!, 5),
+                      buildServiceCard(context, FontAwesomeIcons.sackDollar,
                           'Request Money', Colors.orange[600]!, 6),
-                      _buildServiceCard(context, FontAwesomeIcons.userCheck,
+                      buildServiceCard(context, FontAwesomeIcons.userCheck,
                           'Approvals', Colors.purple[600]!, 7),
-                      _buildServiceCard(context, FontAwesomeIcons.file,
+                      buildServiceCard(context, FontAwesomeIcons.file,
                           'Mandates', Colors.blue[600]!, 8),
-                      _buildServiceCard(context, FontAwesomeIcons.qrcode,
+                      buildServiceCard(context, FontAwesomeIcons.qrcode,
                           'Scan QR', Colors.red[600]!, 9),
-                      _buildServiceCard(
+                      buildServiceCard(
                           context,
                           FontAwesomeIcons.mobileScreenButton,
                           'Generate QR',
@@ -284,6 +281,7 @@ class DashBoard extends StatelessWidget {
                 ],
               ),
             ),
+            MiniMediaplayer(),
           ],
         ),
       ),
@@ -336,7 +334,7 @@ class DashBoard extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceCard(BuildContext context, IconData icon, String title,
+  Widget buildServiceCard(BuildContext context, IconData icon, String title,
       Color color, int pageIndex) {
     return InkWell(
       onTap: () {

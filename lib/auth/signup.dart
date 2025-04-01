@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:fintech_app/auth/login.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fintech_app/auth/usermodel.dart';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignUp extends StatefulWidget {
@@ -10,13 +13,13 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
+  bool isPasswordVisible = false;
+  bool isConfirmPasswordVisible = false;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
       TextEditingController();
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,40 +55,40 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
                 SizedBox(height: 40),
-                _buildTextField(
-                  controller: _nameController,
+                buildTextField(
                   label: 'Full Name',
+                  controller: nameController,
                   icon: FontAwesomeIcons.user,
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: _emailController,
+                buildTextField(
                   label: 'Email',
+                  controller: emailController,
                   icon: FontAwesomeIcons.envelope,
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: _passwordController,
+                buildTextField(
+                  isPassword: true,
                   label: 'Password',
                   icon: FontAwesomeIcons.lock,
-                  isPassword: true,
-                  isPasswordVisible: _isPasswordVisible,
+                  controller: passwordController,
+                  isPasswordVisible: isPasswordVisible,
                   onVisibilityToggle: () {
                     setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
+                      isPasswordVisible = !isPasswordVisible;
                     });
                   },
                 ),
                 SizedBox(height: 20),
-                _buildTextField(
-                  controller: _confirmPasswordController,
+                buildTextField(
+                  controller: confirmPasswordController,
                   label: 'Confirm Password',
                   icon: FontAwesomeIcons.lock,
                   isPassword: true,
-                  isPasswordVisible: _isConfirmPasswordVisible,
+                  isPasswordVisible: isConfirmPasswordVisible,
                   onVisibilityToggle: () {
                     setState(() {
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      isConfirmPasswordVisible = !isConfirmPasswordVisible;
                     });
                   },
                 ),
@@ -94,7 +97,7 @@ class _SignUpState extends State<SignUp> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _signUp,
+                    onPressed: signUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Color(0xFF334D8F),
@@ -106,7 +109,7 @@ class _SignUpState extends State<SignUp> {
                     child: Text(
                       'SIGN UP',
                       style: GoogleFonts.montserrat(
-                        fontSize: 16,
+                        fontSize: 17,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -152,11 +155,11 @@ class _SignUpState extends State<SignUp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildSocialButton(FontAwesomeIcons.google),
+                    buildSocialButton(FontAwesomeIcons.google),
                     SizedBox(width: 20),
-                    _buildSocialButton(FontAwesomeIcons.apple),
+                    buildSocialButton(FontAwesomeIcons.apple),
                     SizedBox(width: 20),
-                    _buildSocialButton(FontAwesomeIcons.facebook),
+                    buildSocialButton(FontAwesomeIcons.facebook),
                   ],
                 ),
               ],
@@ -167,7 +170,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget _buildTextField({
+  Widget buildTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -184,8 +187,8 @@ class _SignUpState extends State<SignUp> {
         controller: controller,
         obscureText: isPassword && !isPasswordVisible,
         style: GoogleFonts.montserrat(
-          color: Colors.white,
           fontSize: 16,
+          color: Colors.white,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -202,11 +205,11 @@ class _SignUpState extends State<SignUp> {
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
+                    size: 18,
                     isPasswordVisible
                         ? FontAwesomeIcons.eyeSlash
                         : FontAwesomeIcons.eye,
                     color: Colors.white.withOpacity(0.7),
-                    size: 18,
                   ),
                   onPressed: onVisibilityToggle,
                 )
@@ -216,7 +219,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget _buildSocialButton(IconData icon) {
+  Widget buildSocialButton(IconData icon) {
     return Container(
       width: 60,
       height: 60,
@@ -226,11 +229,60 @@ class _SignUpState extends State<SignUp> {
       ),
       child: Icon(
         icon,
-        color: Colors.white,
         size: 24,
+        color: Colors.white,
       ),
     );
   }
 
-  void _signUp() {}
+  void signUp() {
+    if (nameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+    final userModel = UserModel(
+      displayName: nameController.text,
+      email: emailController.text,
+      createdAt: DateTime.now().toUtc().toString(),
+    );
+    final authState = Provider.of<AuthenticationState>(context, listen: false);
+    setState(() {});
+    authState
+        .signUp(userModel, context: context, password: passwordController.text)
+        .then((userId) {
+      if (userId != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Account created! Please verify your email')),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SignIn()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create account. Please try again.'),
+          ),
+        );
+      }
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${error.toString()}')),
+      );
+    }).whenComplete(() {
+      setState(() {});
+    });
+  }
 }

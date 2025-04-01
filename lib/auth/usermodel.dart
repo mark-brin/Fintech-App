@@ -9,6 +9,7 @@ class UserModel extends Equatable {
   String? phone;
   String? userId;
   String? userName;
+  bool? isVerified;
   String? createdAt;
   String? profilePic;
   String? displayName;
@@ -23,6 +24,7 @@ class UserModel extends Equatable {
     this.userName,
     this.createdAt,
     this.profilePic,
+    this.isVerified,
     this.bannerImage,
     this.displayName,
   });
@@ -38,6 +40,7 @@ class UserModel extends Equatable {
     userId = map['userId'];
     userName = map['userName'];
     createdAt = map['createdAt'];
+    isVerified = map['isVerified'];
     profilePic = map['profilePic'];
     displayName = map['displayName'];
     bannerImage = map['bannerImage'];
@@ -52,6 +55,7 @@ class UserModel extends Equatable {
       "userId": userId,
       'userName': userName,
       'createdAt': createdAt,
+      'isVerified': isVerified,
       'profilePic': profilePic,
       'bannerImage': bannerImage,
       'displayName': displayName,
@@ -66,6 +70,7 @@ class UserModel extends Equatable {
     String? phone,
     String? userId,
     String? userName,
+    bool? isVerified,
     String? createdAt,
     String? profilePic,
     String? displayName,
@@ -80,6 +85,7 @@ class UserModel extends Equatable {
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
       createdAt: createdAt ?? this.createdAt,
+      isVerified: isVerified ?? this.isVerified,
       profilePic: profilePic ?? this.profilePic,
       displayName: displayName ?? this.displayName,
       bannerImage: bannerImage ?? this.bannerImage,

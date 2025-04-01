@@ -1,8 +1,10 @@
 import 'dart:convert';
-import 'package:fintech_app/auth/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:fintech_app/auth/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:fintech_app/dashboard/dashboard.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -34,7 +36,6 @@ class _SignInState extends State<SignIn> {
 
   Future<String?> fetchUserEmail() async {
     final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       return data['email'];
@@ -44,44 +45,38 @@ class _SignInState extends State<SignIn> {
   }
 
   void signin() async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+    final authState = Provider.of<AuthenticationState>(context, listen: false);
     setState(() {
       isLoading = true;
     });
-
-    try {
-      final userEmail = await fetchUserEmail();
-      if (userEmail == emailController.text &&
-          passwordController.text == 'password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Login successful!'),
-          ),
-        );
-        Navigator.push(
+    authState
+        .signIn(emailController.text, passwordController.text, context: context)
+        .then((userId) {
+      if (userId != null) {
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => DashBoard()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Invalid email! Please try again.'),
-          ),
+          SnackBar(content: Text('Invalid email or password')),
         );
       }
-    } catch (e) {
+    }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Error: ${error.toString()}')),
       );
-    } finally {
+    }).whenComplete(() {
       setState(() {
         isLoading = false;
       });
-    }
+    });
   }
 
   @override
@@ -216,11 +211,11 @@ class _SignInState extends State<SignIn> {
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
+                              size: 18,
                               isPasswordVisible
                                   ? FontAwesomeIcons.eyeSlash
                                   : FontAwesomeIcons.eye,
                               color: Colors.white.withOpacity(0.7),
-                              size: 18,
                             ),
                             onPressed: () {
                               setState(() {
@@ -255,7 +250,7 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
-                      height: 56,
+                      height: 55,
                       child: ElevatedButton(
                         onPressed: isLoading ? null : signin,
                         style: ElevatedButton.styleFrom(

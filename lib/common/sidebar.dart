@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -249,7 +250,10 @@ class _SidebarState extends State<Sidebar> {
                   _menuListRowButton(
                     'Logout',
                     isEnable: true,
-                    onPressed: () {},
+                    onPressed: () {
+                      var auth = Provider.of<AuthenticationState>(context);
+                      auth.logoutCallback();
+                    },
                     icon: FontAwesomeIcons.arrowRightFromBracket,
                   ),
                 ],

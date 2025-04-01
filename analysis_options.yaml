@@ -5,6 +5,7 @@ analyzer:
     deprecated_member_use: ignore
     constant_identifier_names: ignore
     prefer_interpolation_to_compose_strings: ignore
+    use_function_type_syntax_for_parameters: ignore
 
 linter:
   rules:

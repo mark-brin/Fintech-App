@@ -13,8 +13,8 @@ class MediaPlayer extends StatefulWidget {
 
 class _MediaPlayerState extends State<MediaPlayer> {
   bool isPlaying = false;
-  Duration _duration = Duration.zero;
-  Duration _position = Duration.zero;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
   final String audioPath = 'Sample Audio';
   final AudioPlayer audioPlayer = AudioPlayer();
 
@@ -24,13 +24,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
     audioPlayer.setSource(AssetSource('drums.mp3'));
     audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
-        _duration = newDuration;
+        duration = newDuration;
       });
     });
 
     audioPlayer.onPositionChanged.listen((newPosition) {
       setState(() {
-        _position = newPosition;
+        position = newPosition;
       });
     });
   }
@@ -52,11 +52,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
   }
 
-  String _getFileName(String filePath) {
+  String getFileName(String filePath) {
     return path.basenameWithoutExtension(filePath);
   }
 
-  String _formatDuration(Duration duration) {
+  String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
@@ -67,6 +67,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -86,9 +87,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       IconButton(
                         onPressed: widget.onPressed,
                         icon: Icon(
-                          FontAwesomeIcons.chevronDown,
                           size: 20,
                           color: Colors.white,
+                          FontAwesomeIcons.chevronDown,
                         ),
                       ),
                       Text(
@@ -134,11 +135,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    _getFileName(audioPath),
+                    getFileName(audioPath),
                     style: GoogleFonts.montserrat(
                       fontSize: 24,
-                      fontWeight: FontWeight.bold,
                       color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: 8),
@@ -146,25 +147,25 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     "Artist Name",
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
                       color: Colors.white70,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   SizedBox(height: 30),
                   SliderTheme(
                     data: SliderThemeData(
                       trackHeight: 4,
-                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
-                      overlayShape: RoundSliderOverlayShape(overlayRadius: 14),
+                      thumbColor: Colors.white,
                       activeTrackColor: Colors.blue[400],
                       inactiveTrackColor: Colors.grey[700],
-                      thumbColor: Colors.white,
                       overlayColor: Colors.blue.withOpacity(0.2),
+                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 14),
                     ),
                     child: Slider(
                       min: 0.0,
-                      max: _duration.inSeconds.toDouble(),
-                      value: _position.inSeconds.toDouble(),
+                      max: duration.inSeconds.toDouble(),
+                      value: position.inSeconds.toDouble(),
                       onChanged: (double value) async {
                         final position = Duration(seconds: value.toInt());
                         await audioPlayer.seek(position);
@@ -178,19 +179,19 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _formatDuration(_position),
+                          formatDuration(position),
                           style: GoogleFonts.montserrat(
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
                             color: Colors.white70,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
-                          _formatDuration(_duration - _position),
+                          formatDuration(duration - position),
                           style: GoogleFonts.montserrat(
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
                             color: Colors.white70,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -204,8 +205,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
                         iconSize: 32,
                         onPressed: () async {
                           await audioPlayer.seek(Duration(
-                            seconds: (_position.inSeconds - 10)
-                                .clamp(0, _duration.inSeconds),
+                            seconds: (position.inSeconds - 10)
+                                .clamp(0, duration.inSeconds),
                           ));
                         },
                         icon: Icon(
@@ -249,8 +250,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
                         iconSize: 32,
                         onPressed: () async {
                           await audioPlayer.seek(Duration(
-                            seconds: (_position.inSeconds + 10)
-                                .clamp(0, _duration.inSeconds),
+                            seconds: (position.inSeconds + 10)
+                                .clamp(0, duration.inSeconds),
                           ));
                         },
                         icon: Icon(
@@ -297,6 +298,120 @@ class _MediaPlayerState extends State<MediaPlayer> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class MiniMediaplayer extends StatefulWidget {
+  const MiniMediaplayer({super.key});
+  @override
+  State<MiniMediaplayer> createState() => _MiniMediaplayerState();
+}
+
+class _MiniMediaplayerState extends State<MiniMediaplayer> {
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+  final String audioPath = 'Sample Audio';
+  final AudioPlayer audioPlayer = AudioPlayer();
+
+  void playPauseAudio() {
+    if (isPlaying) {
+      audioPlayer.pause();
+    } else {
+      audioPlayer.resume();
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
+  }
+
+  String getFileName(String filePath) {
+    return path.basenameWithoutExtension(filePath);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 8,
+            offset: Offset(0, 4),
+            color: Colors.black.withOpacity(0.2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              'https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  getFileName(audioPath),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "Artist Name",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    color: Colors.white70,
+                  ),
+                ),
+                SizedBox(height: 8),
+                SliderTheme(
+                  data: SliderThemeData(
+                    trackHeight: 2,
+                    thumbColor: Colors.white,
+                    activeTrackColor: Colors.blue[400],
+                    inactiveTrackColor: Colors.grey[700],
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 4),
+                  ),
+                  child: Slider(
+                    min: 0.0,
+                    max: duration.inSeconds.toDouble(),
+                    value: position.inSeconds.toDouble(),
+                    onChanged: (double value) async {
+                      final position = Duration(seconds: value.toInt());
+                      await audioPlayer.seek(position);
+                      await audioPlayer.resume();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
+              color: Colors.white,
+              size: 20,
+            ),
+            onPressed: playPauseAudio,
+          ),
+        ],
       ),
     );
   }
