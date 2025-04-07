@@ -1,13 +1,11 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/state/appstate.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:fintech_app/dashboard/generate.dart';
+import 'package:fintech_app/profile/paymentProfile.dart';
 
 class ScanQR extends StatefulWidget {
   const ScanQR({super.key});
@@ -16,19 +14,18 @@ class ScanQR extends StatefulWidget {
 }
 
 class _ScanQRState extends State<ScanQR> {
+  String? userId;
   final GlobalKey qrKey = GlobalKey();
   late PageController pageController;
   double pageIndex = 0;
   bool isFound = false;
   GlobalKey globalKey = GlobalKey();
   BarcodeCapture? result;
-  String? userId; // This will hold the userId fetched from the API
 
   @override
   void initState() {
     super.initState();
     pageController = PageController()..addListener(pageListener);
-    fetchUserId(); // Fetch user data when the widget initializes
   }
 
   void pageListener() {
@@ -37,19 +34,6 @@ class _ScanQRState extends State<ScanQR> {
         pageIndex = pageController.page!;
       },
     );
-  }
-
-  // Fetch user data from the DummyJSON API
-  Future<void> fetchUserId() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-    if (response.statusCode == 200) {
-      final user = jsonDecode(response.body);
-      setState(() {
-        userId = user['id'].toString(); // Store the user ID in a string
-      });
-    } else {
-      throw Exception('Failed to load user data');
-    }
   }
 
   capturePng() async {}
@@ -82,34 +66,55 @@ class _ScanQRState extends State<ScanQR> {
         child: Stack(
           children: <Widget>[
             PageView.builder(
-              controller: pageController,
               itemCount: 2,
+              controller: pageController,
               itemBuilder: (BuildContext context, int index) {
-                if (index == 0) {
-                  return MobileScanner(
-                    key: qrKey,
-                    onDetect: (barcode) {
-                      if (!isFound) {
-                        setState(() {
-                          result = barcode;
-                        });
-
-                        // Check if result.raw can be cast to a String before using contains
-                        final rawValue = result?.raw as String?;
-                        if (rawValue != null &&
-                            rawValue.contains("fintech_app/profile/")) {
-                          // var userId = rawValue.split("/")[2];
-                          // Navigator.push(
-                          //   context,
-                          //   ProfilePage.getRoute(profileId: userId),
-                          // );
+                return MobileScanner(
+                  key: qrKey,
+                  onDetect: (barcode) {
+                    if (!isFound) {
+                      setState(() {
+                        result = barcode;
+                      });
+                      final rawValue = result?.raw as String?;
+                      if (rawValue != null &&
+                          rawValue.contains("fintech_app/profile/")) {
+                        try {
+                          var userId = rawValue.split("/").last;
+                          setState(() {
+                            isFound = true;
+                          });
+                          Future.delayed(Duration(milliseconds: 500), () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentProfile(
+                                  userId: userId,
+                                ),
+                              ),
+                            ).then((_) {
+                              setState(() {
+                                isFound = false;
+                              });
+                            });
+                          });
+                        } catch (e) {
+                          setState(() {
+                            isFound = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Error processing QR code: ${e.toString()}",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
                         }
                       }
-                    },
-                  );
-                } else {
-                  return GenerateQR(userId: userId, globalKey: globalKey);
-                }
+                    }
+                  },
+                );
               },
             ),
             Align(

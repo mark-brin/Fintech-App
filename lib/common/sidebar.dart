@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:fintech_app/state/authstate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/state/appstate.dart';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Sidebar extends StatefulWidget {
@@ -30,18 +30,8 @@ class _SidebarState extends State<Sidebar> {
     }
   }
 
-  Future<String> getEmail() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data['email'];
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
   Widget menuHeader() {
+    var auth = Provider.of<AuthenticationState>(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
@@ -72,8 +62,8 @@ class _SidebarState extends State<Sidebar> {
                   ],
                 ),
                 child: Icon(
-                  FontAwesomeIcons.user,
                   size: 24,
+                  FontAwesomeIcons.user,
                   color: Colors.white,
                 ),
               ),
@@ -82,54 +72,21 @@ class _SidebarState extends State<Sidebar> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FutureBuilder<String>(
-                      future: getName(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text(
-                            'Error loading name',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[800],
-                            ),
-                          );
-                        } else {
-                          return Text(
-                            snapshot.data ?? 'Loading...',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[800],
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        }
-                      },
+                    Text(
+                      auth.user!.userMetadata!['displayName'] ?? 'Full Name',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 18,
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     SizedBox(height: 4),
-                    FutureBuilder<String>(
-                      future: getEmail(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text(
-                            'Error loading email',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 13,
-                              color: Colors.grey[600],
-                            ),
-                          );
-                        } else {
-                          return Text(
-                            snapshot.data ?? 'Loading...',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 13,
-                              color: Colors.grey[600],
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        }
-                      },
+                    Text(
+                      auth.user!.email!,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ],
                 ),
@@ -149,16 +106,16 @@ class _SidebarState extends State<Sidebar> {
                 color: Color(0xFF334D8F).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Color(0xFF334D8F).withOpacity(0.2),
                   width: 1,
+                  color: Color(0xFF334D8F).withOpacity(0.2),
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    FontAwesomeIcons.userPen,
                     size: 14,
+                    FontAwesomeIcons.userPen,
                     color: Color(0xFF334D8F),
                   ),
                   SizedBox(width: 8),
@@ -166,8 +123,8 @@ class _SidebarState extends State<Sidebar> {
                     "Edit Profile",
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
                       color: Color(0xFF334D8F),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -208,8 +165,8 @@ class _SidebarState extends State<Sidebar> {
             ),
             Spacer(),
             Icon(
-              FontAwesomeIcons.chevronRight,
               size: 14,
+              FontAwesomeIcons.chevronRight,
               color: isEnable ? Colors.grey[400] : Colors.grey[300],
             ),
           ],
@@ -227,9 +184,9 @@ class _SidebarState extends State<Sidebar> {
           children: [
             menuHeader(),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
               height: 1,
               color: Colors.grey[200],
+              margin: EdgeInsets.symmetric(horizontal: 20),
             ),
             SizedBox(height: 10),
             Expanded(

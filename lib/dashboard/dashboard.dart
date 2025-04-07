@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'package:fintech_app/common/mediaplayer.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/wallet/wallet.dart';
@@ -9,10 +6,11 @@ import 'package:fintech_app/common/navbar.dart';
 import 'package:fintech_app/dashboard/scan.dart';
 import 'package:fintech_app/common/sidebar.dart';
 import 'package:fintech_app/state/appstate.dart';
-import 'package:fintech_app/dashboard/user.dart';
 import 'package:fintech_app/rewards/rewards.dart';
 import 'package:fintech_app/profile/profile.dart';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:fintech_app/dashboard/request.dart';
+import 'package:fintech_app/common/mediaplayer.dart';
 import 'package:fintech_app/dashboard/generate.dart';
 import 'package:fintech_app/dashboard/mandates.dart';
 import 'package:fintech_app/dashboard/paymoney.dart';
@@ -22,33 +20,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DashBoard extends StatelessWidget {
   const DashBoard({super.key});
-  Future<String> getName() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data['firstName'];
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
 
-  Future<String> getEmail() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data['email'];
+  String getEmailPrefix(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
+    String email = auth.user!.email ?? '';
+    int atIndex = email.indexOf('@');
+    if (atIndex != -1) {
+      return email.substring(0, atIndex);
     } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
-  Future<String> getPhone() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data['phone'];
-    } else {
-      throw Exception('Failed to load user');
+      return email;
     }
   }
 
@@ -62,24 +42,29 @@ class DashBoard extends StatelessWidget {
         children: [
           Consumer<AppState>(
             builder: (context, appState, child) {
-              return PageView(
-                controller: appState.pageController,
-                onPageChanged: (index) {
-                  appState.setPageIndex = index;
+              return Consumer<AuthenticationState>(
+                builder: (context, auth, _) {
+                  final List<Widget> pages = [
+                    body(context),
+                    Wallet(),
+                    Rewards(),
+                    Transactions(),
+                    ProfilePage(),
+                    PayMoney(),
+                    Requests(),
+                    Approvals(),
+                    Mandates(),
+                    ScanQR(),
+                    GenerateQR(globalKey: globalKey)
+                  ];
+                  return PageView(
+                    children: pages,
+                    controller: appState.pageController,
+                    onPageChanged: (index) {
+                      appState.setPageIndex = index;
+                    },
+                  );
                 },
-                children: [
-                  body(context),
-                  Wallet(),
-                  Rewards(),
-                  Transactions(),
-                  ProfilePage(),
-                  PayMoney(),
-                  Requests(),
-                  Approvals(),
-                  Mandates(),
-                  ScanQR(),
-                  GenerateQR(globalKey: globalKey),
-                ],
               );
             },
           ),
@@ -89,6 +74,7 @@ class DashBoard extends StatelessWidget {
   }
 
   Widget body(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
     return Scaffold(
       drawer: Sidebar(),
       body: SingleChildScrollView(
@@ -113,11 +99,11 @@ class DashBoard extends StatelessWidget {
                     elevation: 0,
                     backgroundColor: Colors.transparent,
                     title: Text(
-                      'Welcome,',
+                      'Welcome!',
                       style: GoogleFonts.montserrat(
                         fontSize: 24,
-                        fontWeight: FontWeight.w500,
                         color: Colors.white,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -126,10 +112,14 @@ class DashBoard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        UserDetail(
-                          fontSize: 27,
-                          altText: 'User',
-                          detail: getName(),
+                        Text(
+                          auth.user!.userMetadata!['displayName'] ??
+                              'Full Name',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 27,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         SizedBox(height: 20),
                         Container(
@@ -155,7 +145,7 @@ class DashBoard extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'UPI ID: **********@ebixcash',
+                                      'UPI ID: ${getEmailPrefix(context)}@ebixcash',
                                       style: GoogleFonts.montserrat(
                                         fontSize: 14,
                                         color: Colors.white,
@@ -163,32 +153,22 @@ class DashBoard extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    FutureBuilder<String>(
-                                      future: getEmail(),
-                                      builder: (context, snapshot) {
-                                        return Text(
-                                          snapshot.data ?? 'Loading...',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 12,
-                                            color:
-                                                Colors.white.withOpacity(0.7),
-                                          ),
-                                        );
-                                      },
+                                    Text(
+                                      auth.user!.email ?? 'Loading...',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 12,
+                                        color: Colors.white.withOpacity(0.7),
+                                      ),
                                     ),
                                     SizedBox(height: 5),
-                                    FutureBuilder<String>(
-                                      future: getPhone(),
-                                      builder: (context, snapshot) {
-                                        return Text(
-                                          snapshot.data ?? 'Loading...',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 12,
-                                            color:
-                                                Colors.white.withOpacity(0.7),
-                                          ),
-                                        );
-                                      },
+                                    Text(
+                                      auth.user!.phone == ''
+                                          ? '+91 999-999-9999'
+                                          : auth.user!.phone!,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 12,
+                                        color: Colors.white.withOpacity(0.7),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -281,6 +261,7 @@ class DashBoard extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(height: 15),
             MiniMediaplayer(),
           ],
         ),

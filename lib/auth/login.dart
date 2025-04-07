@@ -4,24 +4,28 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:fintech_app/auth/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fintech_app/common/widgets.dart';
 import 'package:fintech_app/state/authstate.dart';
 import 'package:fintech_app/dashboard/dashboard.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+  final VoidCallback? loginCallback;
+  const SignIn({super.key, this.loginCallback});
   @override
   State<SignIn> createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
   bool isLoading = false;
+  late CustomLoader loader;
   bool isPasswordVisible = false;
   late TextEditingController emailController;
   late TextEditingController passwordController;
 
   @override
   void initState() {
+    loader = CustomLoader();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     super.initState();
@@ -44,43 +48,71 @@ class _SignInState extends State<SignIn> {
     }
   }
 
+  static bool validateEmail(String email) {
+    String p =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = RegExp(p);
+    var status = regExp.hasMatch(email);
+    return status;
+  }
+
+  static bool validateCredentials(
+      BuildContext context, String? email, String? password) {
+    if (email == null || email.isEmpty) {
+      SnackBar(content: Text('Please enter email id'));
+      return false;
+    } else if (password == null || password.isEmpty) {
+      SnackBar(content: Text('Please enter password'));
+      return false;
+    } else if (password.length < 8) {
+      SnackBar(content: Text('Password must be 8 character long'));
+      return false;
+    }
+    var status = validateEmail(email);
+    if (!status) {
+      SnackBar(content: Text('Please enter valid email id'));
+      return false;
+    }
+    return true;
+  }
+
   void signin() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter both email and password')),
-      );
+    var auth = Provider.of<AuthenticationState>(context, listen: false);
+    if (auth.isBusy) {
       return;
     }
-    final authState = Provider.of<AuthenticationState>(context, listen: false);
-    setState(() {
-      isLoading = true;
-    });
-    authState
-        .signIn(emailController.text, passwordController.text, context: context)
-        .then((userId) {
-      if (userId != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DashBoard()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid email or password')),
-        );
-      }
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${error.toString()}')),
+    loader.showLoader(context);
+    var isValid = validateCredentials(
+      context,
+      emailController.text,
+      passwordController.text,
+    );
+    if (isValid) {
+      auth
+          .signIn(
+        context: context,
+        emailController.text,
+        passwordController.text,
+      )
+          .then(
+        (status) {
+          if (auth.user != null) {
+            loader.hideLoader();
+            Navigator.pop(context);
+            widget.loginCallback!();
+          } else {
+            loader.hideLoader();
+          }
+        },
       );
-    }).whenComplete(() {
-      setState(() {
-        isLoading = false;
-      });
-    });
+    } else {
+      loader.hideLoader();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -193,8 +225,8 @@ class _SignInState extends State<SignIn> {
                         controller: passwordController,
                         obscureText: !isPasswordVisible,
                         style: GoogleFonts.montserrat(
-                          color: Colors.white,
                           fontSize: 16,
+                          color: Colors.white,
                         ),
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
@@ -205,9 +237,9 @@ class _SignInState extends State<SignIn> {
                             color: Colors.white.withOpacity(0.5),
                           ),
                           prefixIcon: Icon(
+                            size: 18,
                             FontAwesomeIcons.lock,
                             color: Colors.white.withOpacity(0.7),
-                            size: 18,
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -249,9 +281,9 @@ class _SignInState extends State<SignIn> {
                     ),
                     SizedBox(height: 30),
                     SizedBox(
-                      width: double.infinity,
                       height: 55,
-                      child: ElevatedButton(
+                      width: double.infinity,
+                      child: TextButton(
                         onPressed: isLoading ? null : signin,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -288,7 +320,11 @@ class _SignInState extends State<SignIn> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SignUp()),
+                              MaterialPageRoute(
+                                builder: (context) => SignUp(
+                                  loginCallback: auth.getCurrentUser,
+                                ),
+                              ),
                             );
                           },
                           child: Text(
@@ -340,11 +376,7 @@ class _SignInState extends State<SignIn> {
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Icon(
-        icon,
-        color: Colors.white,
-        size: 24,
-      ),
+      child: Icon(icon, size: 24, color: Colors.white),
     );
   }
 }

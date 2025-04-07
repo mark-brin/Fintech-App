@@ -100,12 +100,9 @@ class AuthenticationState extends AppState {
         email: userModel.email!,
         password: password,
       );
-
       user = response.user;
       authStatus = AuthStatus.LOGGED_IN;
-
       _userModel = userModel;
-      _userModel!.key = user!.id;
       _userModel!.userId = user!.id;
       createUser(_userModel!, newUser: true);
       return user!.id;
@@ -118,31 +115,67 @@ class AuthenticationState extends AppState {
     }
   }
 
-  void createUser(UserModel user, {bool newUser = false}) {
-    if (newUser) {
-      user.createdAt = DateTime.now().toUtc().toString();
-    }
+  Future<bool> createUser(UserModel user, {bool newUser = false}) async {
+    try {
+      if (newUser) {
+        user.createdAt = DateTime.now().toUtc().toString();
+      }
 
-    supabase.from('profile').upsert(user.toJson()).then((_) {
+      if (user.userId == null || user.userId!.isEmpty) {
+        if (this.user != null) {
+          user.userId = this.user!.id;
+        } else {
+          if (kDebugMode) {
+            print('Create user error: userId is null or empty');
+          }
+          isBusy = false;
+          return false;
+        }
+      }
+
+      if (kDebugMode) {
+        print('Attempting to create/update user with data:');
+        print(user.toJson());
+      }
+
+      final response =
+          await supabase.from('profile').upsert(user.toJson()).select();
+      if (kDebugMode) {
+        print('User created/updated successfully:');
+        print(response);
+      }
+
       _userModel = user;
       isBusy = false;
-    }).catchError((error) {
+      return true;
+    } catch (error) {
       if (kDebugMode) {
         print('Create user error: $error');
+        if (error is PostgrestException) {
+          print('Postgres error code: ${error.code}');
+          print('Postgres error message: ${error.message}');
+          print('Postgres error details: ${error.details}');
+        }
       }
       isBusy = false;
-    });
+      return false;
+    }
   }
 
   Future<User?> getCurrentUser() async {
     try {
       isBusy = true;
-      user = supabase.auth.currentUser;
-
-      if (user != null) {
-        await getProfileUser();
-        authStatus = AuthStatus.LOGGED_IN;
-        userId = user!.id;
+      final session = supabase.auth.currentSession;
+      if (session != null && !session.isExpired) {
+        user = supabase.auth.currentUser;
+        if (user != null) {
+          await getProfileUser();
+          authStatus = AuthStatus.LOGGED_IN;
+          userId = user!.id;
+          databaseInit();
+        } else {
+          authStatus = AuthStatus.NOT_LOGGED_IN;
+        }
       } else {
         authStatus = AuthStatus.NOT_LOGGED_IN;
       }
@@ -159,12 +192,25 @@ class AuthenticationState extends AppState {
   }
 
   void reloadUser() async {
-    await supabase.auth.refreshSession();
-    user = supabase.auth.currentUser;
-
-    if (user != null && user!.emailConfirmedAt != null) {
-      userModel!.isVerified = true;
-      createUser(userModel!);
+    try {
+      final session = supabase.auth.currentSession;
+      if (session != null) {
+        await supabase.auth.refreshSession();
+        user = supabase.auth.currentUser;
+        if (user != null && user!.emailConfirmedAt != null) {
+          userModel!.isVerified = true;
+          createUser(userModel!);
+        }
+      } else {
+        authStatus = AuthStatus.NOT_LOGGED_IN;
+        notifyListeners();
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Reload user error: $error');
+      }
+      authStatus = AuthStatus.NOT_LOGGED_IN;
+      notifyListeners();
     }
   }
 
@@ -235,9 +281,7 @@ class AuthenticationState extends AppState {
     try {
       final data =
           await supabase.from('profile').select().eq('userId', userId).single();
-
       UserModel user = UserModel.fromJson(data);
-      user.key = userId;
       return user;
     } catch (error) {
       if (kDebugMode) {

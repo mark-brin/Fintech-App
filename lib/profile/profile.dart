@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -35,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -82,40 +84,18 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             _buildProfileHeader(),
-            FutureBuilder<Map<String, dynamic>>(
-              future: futureUser,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(30),
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF334D8F),
-                      ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return _buildErrorState(snapshot.error.toString());
-                } else if (snapshot.hasData) {
-                  final user = snapshot.data!;
-                  final String name =
-                      '${user['firstName']} ${user['lastName']}';
-                  final String phone = user['phone'];
-                  final String email = user['email'];
-                  final String qrData =
-                      'Name: $name\nPhone: $phone\nEmail: $email';
-
-                  return Column(
-                    children: [
-                      _buildProfileDetails(name, phone, email),
-                      _buildQRCodeSection(qrData),
-                      _buildActionButtons(),
-                    ],
-                  );
-                } else {
-                  return _buildErrorState('No user data available');
-                }
-              },
+            Column(
+              children: [
+                _buildProfileDetails(
+                  auth.user!.userMetadata!['displayName'] ?? 'Full Name',
+                  auth.user!.phone == ''
+                      ? '+91 999-999-9999'
+                      : auth.user!.phone!,
+                  auth.user!.email!,
+                ),
+                _buildQRCodeSection("fintech_app/profile/${auth.userId}"),
+                _buildActionButtons(),
+              ],
             ),
           ],
         ),
@@ -144,15 +124,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 4,
-                    ),
+                    border: Border.all(width: 4, color: Colors.white),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
                         blurRadius: 10,
                         spreadRadius: 2,
+                        color: Colors.black.withOpacity(0.2),
                       ),
                     ],
                   ),
@@ -293,9 +270,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         IconButton(
           icon: Icon(
-            FontAwesomeIcons.penToSquare,
-            color: Colors.grey[400],
             size: 16,
+            color: Colors.grey[400],
+            FontAwesomeIcons.penToSquare,
           ),
           onPressed: () {},
         ),
@@ -323,9 +300,9 @@ class _ProfilePageState extends State<ProfilePage> {
           Row(
             children: [
               Icon(
+                size: 20,
                 FontAwesomeIcons.qrcode,
                 color: Color(0xFF334D8F),
-                size: 20,
               ),
               SizedBox(width: 10),
               Text(
@@ -344,10 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: Colors.grey[200]!,
-                width: 1,
-              ),
+              border: Border.all(width: 1, color: Colors.grey[200]!),
             ),
             child: QrImageView(
               size: 200,
@@ -450,61 +424,6 @@ class _ProfilePageState extends State<ProfilePage> {
           size: 16,
         ),
         onTap: () {},
-      ),
-    );
-  }
-
-  Widget _buildErrorState(String message) {
-    return Container(
-      padding: EdgeInsets.all(30),
-      child: Column(
-        children: [
-          Icon(
-            FontAwesomeIcons.circleExclamation,
-            color: Colors.red[400],
-            size: 50,
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Error Loading Profile',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            message,
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                futureUser = fetchUserData();
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF334D8F),
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text(
-              'Try Again',
-              style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

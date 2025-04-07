@@ -2,10 +2,15 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   errors:
+    file_names: ignore
+    annotate_overrides: ignore
     deprecated_member_use: ignore
     constant_identifier_names: ignore
-    prefer_interpolation_to_compose_strings: ignore
+    sort_child_properties_last: ignore
+    unnecessary_getters_setters: ignore
+    use_key_in_widget_constructors: ignore
     use_function_type_syntax_for_parameters: ignore
+    prefer_interpolation_to_compose_strings: ignore
 
 linter:
   rules:

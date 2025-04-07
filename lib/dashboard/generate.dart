@@ -3,12 +3,23 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/state/appstate.dart';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class GenerateQR extends StatelessWidget {
-  final String? userId;
   final GlobalKey globalKey;
-  const GenerateQR({super.key, required this.globalKey, this.userId});
+  const GenerateQR({super.key, required this.globalKey});
+  String getEmailPrefix(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
+    String email = auth.user!.email ?? '';
+    int atIndex = email.indexOf('@');
+    if (atIndex != -1) {
+      return email.substring(0, atIndex);
+    } else {
+      return email;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,8 +30,8 @@ class GenerateQR extends StatelessWidget {
         title: Text(
           'Generate QR',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.grey[800],
+            fontWeight: FontWeight.w600,
           ),
         ),
         leading: IconButton(
@@ -37,8 +48,11 @@ class GenerateQR extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.ellipsisVertical,
-                color: Colors.grey[800], size: 20),
+            icon: Icon(
+              FontAwesomeIcons.ellipsisVertical,
+              size: 20,
+              color: Colors.grey[800],
+            ),
             onPressed: () {},
           ),
         ],
@@ -67,8 +81,8 @@ class GenerateQR extends StatelessWidget {
             'Your Payment QR',
             style: GoogleFonts.montserrat(
               fontSize: 24,
-              fontWeight: FontWeight.bold,
               color: Colors.grey[800],
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: 10),
@@ -85,6 +99,7 @@ class GenerateQR extends StatelessWidget {
   }
 
   Widget _buildQRCodeSection(BuildContext context) {
+    final auth = Provider.of<AuthenticationState>(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -99,10 +114,10 @@ class GenerateQR extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
                   blurRadius: 20,
                   spreadRadius: 5,
                   offset: Offset(0, 10),
+                  color: Colors.black.withOpacity(0.08),
                 ),
               ],
             ),
@@ -127,14 +142,15 @@ class GenerateQR extends StatelessWidget {
                           ),
                           padding: EdgeInsets.all(20),
                           child: QrImageView(
-                            data: "fintech_app/${userId ?? 'default_id'}",
+                            version: QrVersions.auto,
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.blue.shade600,
+                            data: "fintech_app/profile/${auth.userId}",
+                            size: MediaQuery.of(context).size.width * .5,
+                            errorCorrectionLevel: QrErrorCorrectLevel.H,
                             embeddedImageStyle: QrEmbeddedImageStyle(
                               size: Size(50, 50),
                             ),
-                            backgroundColor: Colors.blue.shade600,
-                            foregroundColor: Colors.white,
-                            version: QrVersions.auto,
-                            size: MediaQuery.of(context).size.width * .5,
                           ),
                         ),
                       ),
@@ -147,14 +163,14 @@ class GenerateQR extends StatelessWidget {
                             color: Colors.white,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Colors.blue.shade600,
                               width: 2,
+                              color: Colors.blue.shade600,
                             ),
                           ),
                           child: Icon(
+                            size: 16,
                             FontAwesomeIcons.wallet,
                             color: Colors.blue[600],
-                            size: 16,
                           ),
                         ),
                       ),
@@ -167,32 +183,29 @@ class GenerateQR extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.grey[200]!,
-                      width: 1,
-                    ),
+                    border: Border.all(width: 1, color: Colors.grey[200]!),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        FontAwesomeIcons.at,
                         size: 14,
+                        FontAwesomeIcons.at,
                         color: Colors.grey[600],
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'user@ebixcash',
+                        '${getEmailPrefix(context)}@ebixcash',
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(width: 8),
                       Icon(
-                        FontAwesomeIcons.copy,
                         size: 14,
+                        FontAwesomeIcons.copy,
                         color: Colors.blue[600],
                       ),
                     ],
@@ -216,13 +229,7 @@ class GenerateQR extends StatelessWidget {
             'This QR code is encrypted and secure for transactions',
             FontAwesomeIcons.shieldHalved,
           ),
-          SizedBox(height: 15),
-          _buildInfoItem(
-            'Auto Refresh',
-            'QR code refreshes every 24 hours for added security',
-            FontAwesomeIcons.arrowsRotate,
-          ),
-          SizedBox(height: 15),
+          SizedBox(height: 17),
           _buildInfoItem(
             'Instant Notification',
             'Get notified instantly when someone pays you',
@@ -240,14 +247,10 @@ class GenerateQR extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.blue.shade600.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
+            color: Colors.blue.shade600.withOpacity(0.1),
           ),
-          child: Icon(
-            icon,
-            color: Colors.blue[600],
-            size: 18,
-          ),
+          child: Icon(icon, size: 18, color: Colors.blue[600]),
         ),
         SizedBox(width: 15),
         Expanded(
@@ -258,8 +261,8 @@ class GenerateQR extends StatelessWidget {
                 title,
                 style: GoogleFonts.montserrat(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
                   color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(height: 4),
@@ -301,9 +304,7 @@ class GenerateQR extends StatelessWidget {
                   SizedBox(width: 8),
                   Text(
                     'Share QR',
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -328,9 +329,7 @@ class GenerateQR extends StatelessWidget {
                   SizedBox(width: 8),
                   Text(
                     'Download',
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                 ],
               ),

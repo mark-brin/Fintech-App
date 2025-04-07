@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fintech_app/state/appstate.dart';
+import 'package:fintech_app/state/authstate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PayMoney extends StatelessWidget {
   const PayMoney({super.key});
+  String getEmailPrefix(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
+    String email = auth.user!.email ?? '';
+    int atIndex = email.indexOf('@');
+    if (atIndex != -1) {
+      return email.substring(0, atIndex);
+    } else {
+      return email;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,8 +28,8 @@ class PayMoney extends StatelessWidget {
         title: Text(
           'Pay Money',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
         leading: IconButton(
@@ -70,8 +82,8 @@ class PayMoney extends StatelessWidget {
               'Available Balance',
               style: GoogleFonts.montserrat(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.8),
                 fontWeight: FontWeight.w500,
+                color: Colors.white.withOpacity(0.8),
               ),
             ),
             SizedBox(height: 8),
@@ -89,7 +101,7 @@ class PayMoney extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Text(
-              'UPI ID: user@ebixcash',
+              'UPI ID: ${getEmailPrefix(context)}@ebixcash',
               style: GoogleFonts.montserrat(
                 fontSize: 12,
                 color: Colors.white.withOpacity(0.8),
@@ -111,8 +123,8 @@ class PayMoney extends StatelessWidget {
             'Payment Options',
             style: GoogleFonts.montserrat(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
               color: Colors.grey[800],
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: 15),

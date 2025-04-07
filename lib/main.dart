@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   await Supabase.initialize(
+    authOptions: FlutterAuthClientOptions(authFlowType: AuthFlowType.pkce),
     url: 'https://jzdemhpriayzrmxznnkl.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZGVtaHByaWF5enJteHpubmtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0OTQ2NjAsImV4cCI6MjA1OTA3MDY2MH0.wJGaGCgqsEf-UaWutlbcxTxU5RWEhGARb67QKjxT6pA',

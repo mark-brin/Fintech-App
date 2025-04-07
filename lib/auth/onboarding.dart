@@ -1,6 +1,8 @@
+import 'package:fintech_app/state/authstate.dart';
 import 'package:flutter/material.dart';
 import 'package:fintech_app/auth/login.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -38,6 +40,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context, listen: false);
     return Scaffold(
       body: Stack(
         children: [
@@ -92,7 +95,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         } else {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SignIn()),
+                            MaterialPageRoute(
+                              builder: (context) => SignIn(
+                                loginCallback: auth.getCurrentUser,
+                              ),
+                            ),
                           );
                         }
                       },

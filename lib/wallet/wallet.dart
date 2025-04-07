@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fintech_app/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Wallet extends StatelessWidget {
   const Wallet({super.key});
+  String getEmailPrefix(BuildContext context) {
+    var auth = Provider.of<AuthenticationState>(context);
+    String email = auth.user!.email ?? '';
+    int atIndex = email.indexOf('@');
+    if (atIndex != -1) {
+      return email.substring(0, atIndex);
+    } else {
+      return email;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +139,7 @@ class Wallet extends StatelessWidget {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        'user@ebixcash',
+                        '${getEmailPrefix(context)}@ebixcash',
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: Colors.white,
