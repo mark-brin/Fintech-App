@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appstate.dart';
-import 'package:fintech_app/state/authstate.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class GenerateQR extends StatelessWidget {
   final GlobalKey globalKey;
   const GenerateQR({super.key, required this.globalKey});
   String getEmailPrefix(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context);
+    var auth = Provider.of<AuthState>(context);
     String email = auth.user!.email ?? '';
     int atIndex = email.indexOf('@');
     if (atIndex != -1) {
@@ -34,24 +33,24 @@ class GenerateQR extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
-          onPressed: () {
-            var app = Provider.of<AppState>(context, listen: false);
-            app.pageController.animateToPage(
-              0,
-              curve: Curves.easeInOut,
-              duration: Duration(milliseconds: 300),
-            );
-            app.setPageIndex = 0;
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
+        //   onPressed: () {
+        //     var app = Provider.of<AppState>(context, listen: false);
+        //     app.pageController.animateToPage(
+        //       0,
+        //       curve: Curves.easeInOut,
+        //       duration: Duration(milliseconds: 300),
+        //     );
+        //     app.setPageIndex = 0;
+        //   },
+        // ),
         actions: [
           IconButton(
             icon: Icon(
-              FontAwesomeIcons.ellipsisVertical,
               size: 20,
               color: Colors.grey[800],
+              FontAwesomeIcons.ellipsisVertical,
             ),
             onPressed: () {},
           ),
@@ -60,17 +59,17 @@ class GenerateQR extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildQRHeader(),
-            _buildQRCodeSection(context),
-            _buildInfoSection(),
-            _buildActionButtons(),
+            buildQRHeader(),
+            buildQRCodeSection(context),
+            buildInfoSection(),
+            buildActionButtons(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildQRHeader() {
+  Widget buildQRHeader() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -98,8 +97,8 @@ class GenerateQR extends StatelessWidget {
     );
   }
 
-  Widget _buildQRCodeSection(BuildContext context) {
-    final auth = Provider.of<AuthenticationState>(context);
+  Widget buildQRCodeSection(BuildContext context) {
+    final auth = Provider.of<AuthState>(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -145,7 +144,8 @@ class GenerateQR extends StatelessWidget {
                             version: QrVersions.auto,
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.blue.shade600,
-                            data: "fintech_app/profile/${auth.userId}",
+                            data:
+                                "clearpay/profile/${auth.userId}/${auth.user!.displayName}",
                             size: MediaQuery.of(context).size.width * .5,
                             errorCorrectionLevel: QrErrorCorrectLevel.H,
                             embeddedImageStyle: QrEmbeddedImageStyle(
@@ -219,18 +219,18 @@ class GenerateQR extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoSection() {
+  Widget buildInfoSection() {
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildInfoItem(
+          buildInfoItem(
             'Secure Payments',
             'This QR code is encrypted and secure for transactions',
             FontAwesomeIcons.shieldHalved,
           ),
           SizedBox(height: 17),
-          _buildInfoItem(
+          buildInfoItem(
             'Instant Notification',
             'Get notified instantly when someone pays you',
             FontAwesomeIcons.bell,
@@ -240,7 +240,7 @@ class GenerateQR extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(String title, String description, IconData icon) {
+  Widget buildInfoItem(String title, String description, IconData icon) {
     return Row(
       children: [
         Container(
@@ -280,7 +280,7 @@ class GenerateQR extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget buildActionButtons() {
     return Container(
       padding: EdgeInsets.all(20),
       child: Row(

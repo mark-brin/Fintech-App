@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:fintech_app/state/authstate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appstate.dart';
+import 'package:clearpay/state/appstate.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -36,25 +36,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context);
+    var auth = Provider.of<AuthState>(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         toolbarHeight: 60,
         backgroundColor: Color(0xFF334D8F),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            var app = Provider.of<AppState>(context, listen: false);
-            app.pageController.animateToPage(
-              0,
-              curve: Curves.easeInOut,
-              duration: Duration(milliseconds: 300),
-            );
-            app.setPageIndex = 0;
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white),
+        //   onPressed: () {
+        //     var app = Provider.of<AppState>(context, listen: false);
+        //     app.pageController.animateToPage(
+        //       0,
+        //       curve: Curves.easeInOut,
+        //       duration: Duration(milliseconds: 300),
+        //     );
+        //     app.setPageIndex = 0;
+        //   },
+        // ),
         title: Text(
           'My Profile',
           style: GoogleFonts.montserrat(
@@ -83,18 +83,18 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildProfileHeader(),
+            buildProfileHeader(),
             Column(
               children: [
-                _buildProfileDetails(
-                  auth.user!.userMetadata!['displayName'] ?? 'Full Name',
-                  auth.user!.phone == ''
+                buildProfileDetails(
+                  auth.user!.displayName ?? 'Full Name',
+                  auth.user?.phoneNumber == null
                       ? '+91 999-999-9999'
-                      : auth.user!.phone!,
+                      : auth.user!.phoneNumber!,
                   auth.user!.email!,
                 ),
-                _buildQRCodeSection("fintech_app/profile/${auth.userId}"),
-                _buildActionButtons(),
+                buildQRCodeSection("clearpay/profile/${auth.userId}"),
+                buildActionButtons(),
               ],
             ),
           ],
@@ -103,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget buildProfileHeader() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -147,17 +147,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
                         blurRadius: 5,
                         spreadRadius: 1,
+                        color: Colors.black.withOpacity(0.2),
                       ),
                     ],
                   ),
                   child: IconButton(
                     icon: Icon(
+                      size: 18,
                       FontAwesomeIcons.camera,
                       color: Color(0xFF334D8F),
-                      size: 18,
                     ),
                     onPressed: () {},
                   ),
@@ -167,9 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(height: 10),
             TextButton(
               onPressed: () {},
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.white),
               child: Text(
                 'Update Photo',
                 style: GoogleFonts.montserrat(
@@ -185,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileDetails(String name, String phone, String email) {
+  Widget buildProfileDetails(String name, String phone, String email) {
     return Container(
       margin: EdgeInsets.all(20),
       padding: EdgeInsets.all(20),
@@ -194,29 +192,22 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
       child: Column(
         children: [
-          _buildProfileDetailItem(
+          buildProfileDetailItem(
             FontAwesomeIcons.user,
             'Full Name',
             name,
             Colors.blue[600]!,
           ),
           Divider(height: 30),
-          _buildProfileDetailItem(
-            FontAwesomeIcons.phone,
-            'Phone Number',
-            phone,
-            Colors.green[600]!,
-          ),
-          Divider(height: 30),
-          _buildProfileDetailItem(
+          buildProfileDetailItem(
             FontAwesomeIcons.envelope,
             'Email Address',
             email,
@@ -227,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileDetailItem(
+  Widget buildProfileDetailItem(
       IconData icon, String label, String value, Color color) {
     return Row(
       children: [
@@ -238,11 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 18,
-          ),
+          child: Icon(icon, size: 18, color: color),
         ),
         SizedBox(width: 15),
         Expanded(
@@ -260,9 +247,9 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 value,
                 style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
                   color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -280,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildQRCodeSection(String qrData) {
+  Widget buildQRCodeSection(String qrData) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.all(20),
@@ -289,9 +276,9 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -309,8 +296,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 'My QR Code',
                 style: GoogleFonts.montserrat(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
                   color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -331,9 +318,7 @@ class _ProfilePageState extends State<ProfilePage> {
               foregroundColor: Color(0xFF334D8F),
               errorCorrectionLevel: QrErrorCorrectLevel.H,
               embeddedImage: AssetImage('assets/app_icon.png'),
-              embeddedImageStyle: QrEmbeddedImageStyle(
-                size: Size(40, 40),
-              ),
+              embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
             ),
           ),
           SizedBox(height: 15),
@@ -350,30 +335,30 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget buildActionButtons() {
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildActionButton(
+          buildActionButton(
             'Share Profile',
             FontAwesomeIcons.shareNodes,
             Colors.blue[600]!,
           ),
           SizedBox(height: 15),
-          _buildActionButton(
+          buildActionButton(
             'Privacy Settings',
             FontAwesomeIcons.lock,
             Colors.green[600]!,
           ),
           SizedBox(height: 15),
-          _buildActionButton(
+          buildActionButton(
             'Help & Support',
             FontAwesomeIcons.circleQuestion,
             Colors.orange[600]!,
           ),
           SizedBox(height: 15),
-          _buildActionButton(
+          buildActionButton(
             'Logout',
             FontAwesomeIcons.rightFromBracket,
             Colors.red[600]!,
@@ -383,16 +368,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildActionButton(String label, IconData icon, Color color) {
+  Widget buildActionButton(String label, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -404,23 +389,19 @@ class _ProfilePageState extends State<ProfilePage> {
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 18,
-          ),
+          child: Icon(icon, size: 18, color: color),
         ),
         title: Text(
           label,
           style: GoogleFonts.montserrat(
             fontSize: 15,
-            fontWeight: FontWeight.w600,
             color: Colors.grey[800],
+            fontWeight: FontWeight.w600,
           ),
         ),
         trailing: Icon(
-          FontAwesomeIcons.chevronRight,
           color: Colors.grey[400],
+          FontAwesomeIcons.chevronRight,
           size: 16,
         ),
         onTap: () {},

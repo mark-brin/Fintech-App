@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fintech_app/auth/login.dart';
-import 'package:fintech_app/common/enums.dart';
+import 'package:clearpay/auth/login.dart';
+import 'package:clearpay/common/enums.dart';
+import 'package:clearpay/common/widgets.dart';
+import 'package:clearpay/auth/usermodel.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/common/widgets.dart';
-import 'package:fintech_app/auth/usermodel.dart';
-import 'package:fintech_app/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignUp extends StatefulWidget {
@@ -20,13 +20,14 @@ class _SignUpState extends State<SignUp> {
   bool isConfirmPasswordVisible = false;
   late CustomLoader loader = CustomLoader();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context, listen: false);
+    var auth = Provider.of<AuthState>(context, listen: false);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -46,8 +47,8 @@ class _SignUpState extends State<SignUp> {
                   'Create Account',
                   style: GoogleFonts.montserrat(
                     fontSize: 32,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 8),
@@ -72,6 +73,12 @@ class _SignUpState extends State<SignUp> {
                 ),
                 SizedBox(height: 20),
                 buildTextField(
+                  label: 'Phone',
+                  controller: phoneController,
+                  icon: FontAwesomeIcons.phone,
+                ),
+                SizedBox(height: 20),
+                buildTextField(
                   isPassword: true,
                   label: 'Password',
                   icon: FontAwesomeIcons.lock,
@@ -85,10 +92,10 @@ class _SignUpState extends State<SignUp> {
                 ),
                 SizedBox(height: 20),
                 buildTextField(
-                  controller: confirmController,
+                  isPassword: true,
                   label: 'Confirm Password',
                   icon: FontAwesomeIcons.lock,
-                  isPassword: true,
+                  controller: confirmController,
                   isPasswordVisible: isConfirmPasswordVisible,
                   onVisibilityToggle: () {
                     setState(() {
@@ -99,7 +106,7 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(height: 30),
                 SizedBox(
                   width: double.infinity,
-                  height: 56,
+                  height: 55,
                   child: TextButton(
                     onPressed: () {
                       signUp(context);
@@ -209,8 +216,8 @@ class _SignUpState extends State<SignUp> {
           ),
           prefixIcon: Icon(
             icon,
-            color: Colors.white.withOpacity(0.7),
             size: 18,
+            color: Colors.white.withOpacity(0.7),
           ),
           suffixIcon: isPassword
               ? IconButton(
@@ -258,13 +265,13 @@ class _SignUpState extends State<SignUp> {
       return;
     }
     loader.showLoader(context);
-    var state = Provider.of<AuthenticationState>(context, listen: false);
+    var state = Provider.of<AuthState>(context, listen: false);
     UserModel user = UserModel(
+      phone: phoneController.text,
       displayName: nameController.text,
       email: emailController.text.toLowerCase(),
       profilePic:
-          'https://images.pexels.com/photos/3938465/pexels-photo-3938465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      isVerified: false,
+          'https://images.pexels.com/photos/13221344/pexels-photo-13221344.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load',
     );
     state
         .signUp(user, context: context, password: passwordController.text)

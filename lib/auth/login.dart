@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:fintech_app/auth/signup.dart';
+import 'package:clearpay/auth/signup.dart';
+import 'package:clearpay/common/widgets.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/common/widgets.dart';
-import 'package:fintech_app/state/authstate.dart';
-import 'package:fintech_app/dashboard/dashboard.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignIn extends StatefulWidget {
@@ -38,16 +35,6 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  Future<String?> fetchUserEmail() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['email'];
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
   static bool validateEmail(String email) {
     String p =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -77,26 +64,17 @@ class _SignInState extends State<SignIn> {
   }
 
   void signin() async {
-    var auth = Provider.of<AuthenticationState>(context, listen: false);
-    if (auth.isBusy) {
+    var state = Provider.of<AuthState>(context, listen: false);
+    if (state.isBusy) {
       return;
     }
     loader.showLoader(context);
     var isValid = validateCredentials(
-      context,
-      emailController.text,
-      passwordController.text,
-    );
+        context, emailController.text, passwordController.text);
     if (isValid) {
-      auth
-          .signIn(
-        context: context,
-        emailController.text,
-        passwordController.text,
-      )
-          .then(
+      state.signIn(context, emailController.text, passwordController.text).then(
         (status) {
-          if (auth.user != null) {
+          if (state.user != null) {
             loader.hideLoader();
             Navigator.pop(context);
             widget.loginCallback!();
@@ -112,7 +90,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context);
+    var auth = Provider.of<AuthState>(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -138,13 +116,13 @@ class _SignInState extends State<SignIn> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
                           shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.1),
                         ),
                         child: Icon(
-                          FontAwesomeIcons.wallet,
                           size: 50,
                           color: Colors.white,
+                          FontAwesomeIcons.wallet,
                         ),
                       ),
                     ),
@@ -174,8 +152,8 @@ class _SignInState extends State<SignIn> {
                       'Email',
                       style: GoogleFonts.montserrat(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.9),
                         fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                     SizedBox(height: 10),
@@ -187,21 +165,23 @@ class _SignInState extends State<SignIn> {
                       child: TextField(
                         controller: emailController,
                         style: GoogleFonts.montserrat(
-                          color: Colors.white,
                           fontSize: 16,
+                          color: Colors.white,
                         ),
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 18),
+                            vertical: 18,
+                            horizontal: 20,
+                          ),
                           border: InputBorder.none,
                           hintText: 'Enter your email',
                           hintStyle: GoogleFonts.montserrat(
                             color: Colors.white.withOpacity(0.5),
                           ),
                           prefixIcon: Icon(
+                            size: 18,
                             FontAwesomeIcons.envelope,
                             color: Colors.white.withOpacity(0.7),
-                            size: 18,
                           ),
                         ),
                       ),
@@ -211,8 +191,8 @@ class _SignInState extends State<SignIn> {
                       'Password',
                       style: GoogleFonts.montserrat(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.9),
                         fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                     SizedBox(height: 10),
@@ -230,7 +210,9 @@ class _SignInState extends State<SignIn> {
                         ),
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 18),
+                            vertical: 18,
+                            horizontal: 20,
+                          ),
                           border: InputBorder.none,
                           hintText: 'Enter your password',
                           hintStyle: GoogleFonts.montserrat(
@@ -262,14 +244,7 @@ class _SignInState extends State<SignIn> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DashBoard(),
-                            ),
-                          );
-                        },
+                        onPressed: () {},
                         child: Text(
                           'Forgot Password?',
                           style: GoogleFonts.montserrat(
@@ -286,12 +261,12 @@ class _SignInState extends State<SignIn> {
                       child: TextButton(
                         onPressed: isLoading ? null : signin,
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           backgroundColor: Colors.white,
                           foregroundColor: Color(0xFF334D8F),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          elevation: 0,
                         ),
                         child: isLoading
                             ? CircularProgressIndicator(
@@ -350,11 +325,11 @@ class _SignInState extends State<SignIn> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildSocialButton(FontAwesomeIcons.google),
+                        buildSocialButton(FontAwesomeIcons.google),
                         SizedBox(width: 20),
-                        _buildSocialButton(FontAwesomeIcons.apple),
+                        buildSocialButton(FontAwesomeIcons.apple),
                         SizedBox(width: 20),
-                        _buildSocialButton(FontAwesomeIcons.facebook),
+                        buildSocialButton(FontAwesomeIcons.facebook),
                       ],
                     ),
                     SizedBox(height: 30),
@@ -368,7 +343,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Widget _buildSocialButton(IconData icon) {
+  Widget buildSocialButton(IconData icon) {
     return Container(
       width: 60,
       height: 60,

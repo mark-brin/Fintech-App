@@ -1,7 +1,7 @@
-name: fintech_app
+name: clearpay
 description: ""
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.1.0
 
 environment:
   sdk: ^3.5.4
@@ -18,12 +18,16 @@ dependencies:
   google_fonts: ^6.2.1
   audioplayers: ^6.1.2
   path_provider: ^2.1.5
+  firebase_auth: ^5.5.3
   mobile_scanner: ^6.0.7
   google_sign_in: ^6.3.0
+  firebase_core: ^3.13.0
   cupertino_icons: ^1.0.8
-  supabase_flutter: ^2.8.4
+  cloud_firestore: ^5.6.7
+  contacts_service: ^0.6.3
   shared_preferences: ^2.5.2
   font_awesome_flutter: ^10.8.0
+  permission_handler: ^12.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -34,5 +38,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - 'assets/drums.mp3'
+    - 'assets/assistant.mp3'
     - 'assets/onboarding.png'

@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:clearpay/wallet/wallet.dart';
+import 'package:clearpay/common/navbar.dart';
+import 'package:clearpay/dashboard/scan.dart';
+import 'package:clearpay/common/sidebar.dart';
+import 'package:clearpay/state/appstate.dart';
+import 'package:clearpay/rewards/rewards.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/wallet/wallet.dart';
-import 'package:fintech_app/common/navbar.dart';
-import 'package:fintech_app/dashboard/scan.dart';
-import 'package:fintech_app/common/sidebar.dart';
-import 'package:fintech_app/state/appstate.dart';
-import 'package:fintech_app/rewards/rewards.dart';
-import 'package:fintech_app/profile/profile.dart';
-import 'package:fintech_app/state/authstate.dart';
-import 'package:fintech_app/dashboard/request.dart';
-import 'package:fintech_app/common/mediaplayer.dart';
-import 'package:fintech_app/dashboard/generate.dart';
-import 'package:fintech_app/dashboard/mandates.dart';
-import 'package:fintech_app/dashboard/paymoney.dart';
-import 'package:fintech_app/dashboard/approvals.dart';
-import 'package:fintech_app/transactions/transactions.dart';
+import 'package:clearpay/dashboard/request.dart';
+import 'package:clearpay/dashboard/mandates.dart';
+import 'package:clearpay/dashboard/generate.dart';
+import 'package:clearpay/common/mediaplayer.dart';
+import 'package:clearpay/dashboard/paymoney.dart';
+import 'package:clearpay/dashboard/approvals.dart';
+import 'package:clearpay/transactions/transactions.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DashBoard extends StatelessWidget {
   const DashBoard({super.key});
-
   String getEmailPrefix(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context);
+    var auth = Provider.of<AuthState>(context);
     String email = auth.user!.email ?? '';
     int atIndex = email.indexOf('@');
     if (atIndex != -1) {
@@ -34,7 +32,6 @@ class DashBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey globalKey = GlobalKey();
     return Scaffold(
       drawer: Sidebar(),
       bottomNavigationBar: MainNavBar(),
@@ -42,20 +39,20 @@ class DashBoard extends StatelessWidget {
         children: [
           Consumer<AppState>(
             builder: (context, appState, child) {
-              return Consumer<AuthenticationState>(
+              return Consumer<AuthState>(
                 builder: (context, auth, _) {
                   final List<Widget> pages = [
                     body(context),
                     Wallet(),
                     Rewards(),
                     Transactions(),
-                    ProfilePage(),
-                    PayMoney(),
-                    Requests(),
-                    Approvals(),
-                    Mandates(),
-                    ScanQR(),
-                    GenerateQR(globalKey: globalKey)
+                    //ProfilePage(),
+                    //PayMoney(),
+                    //Requests(),
+                    //Approvals(),
+                    //Mandates(),
+                    //ScanQR(),
+                    //GenerateQR(globalKey: globalKey),
                   ];
                   return PageView(
                     children: pages,
@@ -74,7 +71,8 @@ class DashBoard extends StatelessWidget {
   }
 
   Widget body(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context);
+    final GlobalKey globalKey = GlobalKey();
+    var auth = Provider.of<AuthState>(context);
     return Scaffold(
       drawer: Sidebar(),
       body: SingleChildScrollView(
@@ -110,11 +108,11 @@ class DashBoard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.all(20),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          auth.user!.userMetadata!['displayName'] ??
-                              'Full Name',
+                          auth.user!.displayName ?? 'Full Name',
                           style: GoogleFonts.montserrat(
                             fontSize: 27,
                             color: Colors.white,
@@ -129,6 +127,7 @@ class DashBoard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               CircleAvatar(
                                 radius: 30,
@@ -142,12 +141,13 @@ class DashBoard extends StatelessWidget {
                               SizedBox(width: 15),
                               Expanded(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'UPI ID: ${getEmailPrefix(context)}@ebixcash',
+                                      'Payment ID: ${getEmailPrefix(context)}@ebixcash',
                                       style: GoogleFonts.montserrat(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -156,15 +156,15 @@ class DashBoard extends StatelessWidget {
                                     Text(
                                       auth.user!.email ?? 'Loading...',
                                       style: GoogleFonts.montserrat(
-                                        fontSize: 12,
+                                        fontSize: 11,
                                         color: Colors.white.withOpacity(0.7),
                                       ),
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      auth.user!.phone == ''
+                                      auth.user?.phoneNumber == null
                                           ? '+91 999-999-9999'
-                                          : auth.user!.phone!,
+                                          : auth.user!.phoneNumber!,
                                       style: GoogleFonts.montserrat(
                                         fontSize: 12,
                                         color: Colors.white.withOpacity(0.7),
@@ -191,8 +191,8 @@ class DashBoard extends StatelessWidget {
                     'Quick Actions',
                     style: GoogleFonts.montserrat(
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
                       color: Colors.grey[800],
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 15),
@@ -204,14 +204,14 @@ class DashBoard extends StatelessWidget {
                         FontAwesomeIcons.wallet,
                         'My Wallet',
                         Colors.blue[700]!,
-                        1,
+                        Wallet(),
                       ),
                       buildQuickActionCard(
                         context,
                         FontAwesomeIcons.clockRotateLeft,
                         'Transactions',
                         Colors.purple[700]!,
-                        3,
+                        Transactions(),
                       ),
                     ],
                   ),
@@ -234,28 +234,54 @@ class DashBoard extends StatelessWidget {
                   SizedBox(height: 15),
                   GridView.count(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
                     crossAxisCount: 3,
-                    childAspectRatio: 1.1,
-                    crossAxisSpacing: 15,
                     mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                    childAspectRatio: 1.1,
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
-                      buildServiceCard(context, FontAwesomeIcons.moneyBill1Wave,
-                          'Pay Money', Colors.green[600]!, 5),
-                      buildServiceCard(context, FontAwesomeIcons.sackDollar,
-                          'Request Money', Colors.orange[600]!, 6),
-                      buildServiceCard(context, FontAwesomeIcons.userCheck,
-                          'Approvals', Colors.purple[600]!, 7),
-                      buildServiceCard(context, FontAwesomeIcons.file,
-                          'Mandates', Colors.blue[600]!, 8),
-                      buildServiceCard(context, FontAwesomeIcons.qrcode,
-                          'Scan QR', Colors.red[600]!, 9),
                       buildServiceCard(
-                          context,
-                          FontAwesomeIcons.mobileScreenButton,
-                          'Generate QR',
-                          Colors.teal[600]!,
-                          10),
+                        context,
+                        FontAwesomeIcons.moneyBill1Wave,
+                        'Pay Money',
+                        Colors.green[600]!,
+                        PayMoney(),
+                      ),
+                      buildServiceCard(
+                        context,
+                        FontAwesomeIcons.sackDollar,
+                        'Request Money',
+                        Colors.orange[600]!,
+                        Request(),
+                      ),
+                      buildServiceCard(
+                        context,
+                        FontAwesomeIcons.userCheck,
+                        'Approvals',
+                        Colors.purple[600]!,
+                        Approvals(),
+                      ),
+                      buildServiceCard(
+                        context,
+                        FontAwesomeIcons.file,
+                        'Mandates',
+                        Colors.blue[600]!,
+                        Mandates(),
+                      ),
+                      buildServiceCard(
+                        context,
+                        FontAwesomeIcons.qrcode,
+                        'Scan QR',
+                        Colors.red[600]!,
+                        ScanQR(),
+                      ),
+                      buildServiceCard(
+                        context,
+                        FontAwesomeIcons.mobileScreenButton,
+                        'Generate QR',
+                        Colors.teal[600]!,
+                        GenerateQR(globalKey: globalKey),
+                      ),
                     ],
                   ),
                 ],
@@ -270,11 +296,15 @@ class DashBoard extends StatelessWidget {
   }
 
   Widget buildQuickActionCard(BuildContext context, IconData icon, String label,
-      Color color, int pageIndex) {
+      Color color, Widget buttonRoute) {
     return InkWell(
       onTap: () {
-        var app = Provider.of<AppState>(context, listen: false);
-        app.setPageIndex = pageIndex;
+        // var app = Provider.of<AppState>(context, listen: false);
+        // app.setPageIndex = pageIndex;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => buttonRoute),
+        );
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -284,9 +314,9 @@ class DashBoard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               spreadRadius: 1,
+              color: Colors.black.withOpacity(0.05),
             ),
           ],
         ),
@@ -316,11 +346,15 @@ class DashBoard extends StatelessWidget {
   }
 
   Widget buildServiceCard(BuildContext context, IconData icon, String title,
-      Color color, int pageIndex) {
+      Color color, Widget buttonRoute) {
     return InkWell(
       onTap: () {
-        var app = Provider.of<AppState>(context, listen: false);
-        app.setPageIndex = pageIndex;
+        // var app = Provider.of<AppState>(context, listen: false);
+        // app.setPageIndex = pageIndex;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => buttonRoute),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -328,9 +362,9 @@ class DashBoard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
               spreadRadius: 1,
+              color: Colors.black.withOpacity(0.05),
             ),
           ],
         ),
@@ -351,8 +385,8 @@ class DashBoard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
                 color: Colors.grey[800],
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

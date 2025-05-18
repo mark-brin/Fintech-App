@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Rewards extends StatelessWidget {
   const Rewards({super.key});
@@ -14,36 +14,29 @@ class Rewards extends StatelessWidget {
         title: Text(
           'Rewards',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(FontAwesomeIcons.circleInfo,
-                color: Colors.white, size: 20),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildPointsCard(context),
+            buildPointsCard(context),
             SizedBox(height: 20),
-            _buildRewardCategories(),
+            buildRewardCategories(),
             SizedBox(height: 20),
-            _buildAvailableRewards(),
+            buildAvailableRewards(),
             SizedBox(height: 20),
-            _buildRecentActivity(),
+            buildRecentActivity(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPointsCard(BuildContext context) {
+  Widget buildPointsCard(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -63,18 +56,15 @@ class Rewards extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.indigo[800]!,
-                    Colors.indigo[600]!,
-                  ],
+                  colors: [Colors.indigo[800]!, Colors.indigo[600]!],
                 ),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 10,
                     spreadRadius: 1,
                     offset: Offset(0, 5),
+                    color: Colors.black.withOpacity(0.2),
                   ),
                 ],
               ),
@@ -87,8 +77,8 @@ class Rewards extends StatelessWidget {
                         'Your Points',
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
                           fontWeight: FontWeight.w500,
+                          color: Colors.white.withOpacity(0.9),
                         ),
                       ),
                       Container(
@@ -114,9 +104,9 @@ class Rewards extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
-                        FontAwesomeIcons.coins,
-                        color: Colors.amber,
                         size: 30,
+                        color: Colors.amber,
+                        FontAwesomeIcons.coins,
                       ),
                       SizedBox(width: 15),
                       Text(
@@ -137,8 +127,11 @@ class Rewards extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            Icon(FontAwesomeIcons.arrowUp,
-                                size: 10, color: Colors.green[300]),
+                            Icon(
+                              size: 10,
+                              FontAwesomeIcons.arrowUp,
+                              color: Colors.green[300],
+                            ),
                             SizedBox(width: 4),
                             Text(
                               '+125 this month',
@@ -178,8 +171,8 @@ class Rewards extends StatelessWidget {
                         '3,000',
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
-                          color: Colors.white.withOpacity(0.8),
                           fontWeight: FontWeight.w600,
+                          color: Colors.white.withOpacity(0.8),
                         ),
                       ),
                     ],
@@ -193,7 +186,7 @@ class Rewards extends StatelessWidget {
     );
   }
 
-  Widget _buildRewardCategories() {
+  Widget buildRewardCategories() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -203,8 +196,8 @@ class Rewards extends StatelessWidget {
             'Categories',
             style: GoogleFonts.montserrat(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
               color: Colors.grey[800],
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: 15),
@@ -212,15 +205,15 @@ class Rewards extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildCategoryCard('Shopping', FontAwesomeIcons.bagShopping,
+                buildCategoryCard('Shopping', FontAwesomeIcons.bagShopping,
                     Colors.blue[600]!),
-                _buildCategoryCard(
+                buildCategoryCard(
                     'Travel', FontAwesomeIcons.plane, Colors.orange[600]!),
-                _buildCategoryCard(
+                buildCategoryCard(
                     'Food', FontAwesomeIcons.utensils, Colors.red[600]!),
-                _buildCategoryCard('Entertainment', FontAwesomeIcons.film,
+                buildCategoryCard('Entertainment', FontAwesomeIcons.film,
                     Colors.purple[600]!),
-                _buildCategoryCard(
+                buildCategoryCard(
                     'Utilities', FontAwesomeIcons.bolt, Colors.green[600]!),
               ],
             ),
@@ -230,7 +223,7 @@ class Rewards extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(String title, IconData icon, Color color) {
+  Widget buildCategoryCard(String title, IconData icon, Color color) {
     return Container(
       width: 100,
       margin: EdgeInsets.only(right: 15),
@@ -240,9 +233,9 @@ class Rewards extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -252,22 +245,18 @@ class Rewards extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
               shape: BoxShape.circle,
+              color: color.withOpacity(0.1),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            child: Icon(icon, size: 24, color: color),
           ),
           SizedBox(height: 10),
           Text(
             title,
             style: GoogleFonts.montserrat(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
               color: Colors.grey[800],
+              fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
@@ -276,7 +265,7 @@ class Rewards extends StatelessWidget {
     );
   }
 
-  Widget _buildAvailableRewards() {
+  Widget buildAvailableRewards() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -307,7 +296,7 @@ class Rewards extends StatelessWidget {
             ],
           ),
           SizedBox(height: 15),
-          _buildRewardCard(
+          buildRewardCard(
             'Amazon Gift Card',
             '10% off on your next purchase',
             '500 points',
@@ -315,7 +304,7 @@ class Rewards extends StatelessWidget {
             Colors.blue[700]!,
             FontAwesomeIcons.gift,
           ),
-          _buildRewardCard(
+          buildRewardCard(
             'Movie Tickets',
             'Buy 1 Get 1 Free on weekend shows',
             '750 points',
@@ -323,7 +312,7 @@ class Rewards extends StatelessWidget {
             Colors.red[600]!,
             FontAwesomeIcons.ticket,
           ),
-          _buildRewardCard(
+          buildRewardCard(
             'Coffee Voucher',
             'Free coffee at Starbucks',
             '300 points',
@@ -336,7 +325,7 @@ class Rewards extends StatelessWidget {
     );
   }
 
-  Widget _buildRewardCard(String title, String description, String points,
+  Widget buildRewardCard(String title, String description, String points,
       String validity, Color color, IconData icon) {
     return Container(
       margin: EdgeInsets.only(bottom: 15),
@@ -345,9 +334,9 @@ class Rewards extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -368,11 +357,7 @@ class Rewards extends StatelessWidget {
                       color: color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: 24,
-                    ),
+                    child: Icon(icon, size: 24, color: color),
                   ),
                   SizedBox(width: 15),
                   Expanded(
@@ -383,8 +368,8 @@ class Rewards extends StatelessWidget {
                           title,
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
                             color: Colors.grey[800],
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         SizedBox(height: 4),
@@ -408,9 +393,9 @@ class Rewards extends StatelessWidget {
                               child: Text(
                                 points,
                                 style: GoogleFonts.montserrat(
+                                  color: color,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: color,
                                 ),
                               ),
                             ),
@@ -428,9 +413,9 @@ class Rewards extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    FontAwesomeIcons.chevronRight,
-                    color: Colors.grey[400],
                     size: 16,
+                    color: Colors.grey[400],
+                    FontAwesomeIcons.chevronRight,
                   ),
                 ],
               ),
@@ -441,7 +426,7 @@ class Rewards extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity() {
+  Widget buildRecentActivity() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -456,7 +441,7 @@ class Rewards extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15),
-          _buildActivityItem(
+          buildActivityItem(
             'Points Earned',
             'Online Shopping',
             '+50 points',
@@ -465,7 +450,7 @@ class Rewards extends StatelessWidget {
             Colors.green[600]!,
             isEarned: true,
           ),
-          _buildActivityItem(
+          buildActivityItem(
             'Redeemed',
             'Amazon Gift Card',
             '-200 points',
@@ -474,7 +459,7 @@ class Rewards extends StatelessWidget {
             Colors.red[600]!,
             isEarned: false,
           ),
-          _buildActivityItem(
+          buildActivityItem(
             'Points Earned',
             'Bill Payment',
             '+75 points',
@@ -483,7 +468,7 @@ class Rewards extends StatelessWidget {
             Colors.green[600]!,
             isEarned: true,
           ),
-          _buildActivityItem(
+          buildActivityItem(
             'Bonus Points',
             'Referral Reward',
             '+100 points',
@@ -497,7 +482,7 @@ class Rewards extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityItem(String title, String subtitle, String points,
+  Widget buildActivityItem(String title, String subtitle, String points,
       String date, IconData icon, Color color,
       {required bool isEarned}) {
     return Container(

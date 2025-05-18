@@ -4,32 +4,6 @@ enum AuthStatus {
   LOGGED_IN,
 }
 
-enum PostType {
-  Post,
-  Detail,
-  ParentPost,
-  Saved,
-  Poll,
-  PollDetail,
-  ParentPoll,
-  Mention,
-}
-
-enum SortUser {
-  Verified,
-  Alphabetically,
-  Newest,
-  Oldest,
-  MaxFollower,
-}
-
-enum NotificationType {
-  NOT_DETERMINED,
-  Message,
-  Post,
-  Comment,
-  Repost,
-  Follow,
-  Mention,
-  Like
-}
+const USERS = 'Users';
+const REQUESTS = 'Requests';
+const TRANSACTIONS = 'Transactions';

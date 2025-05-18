@@ -3,39 +3,56 @@ import 'dart:async';
 import 'appState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:fintech_app/common/enums.dart';
-import 'package:fintech_app/common/locator.dart';
-import 'package:fintech_app/auth/usermodel.dart';
+import 'package:clearpay/common/enums.dart';
+import 'package:clearpay/common/locator.dart';
+import 'package:clearpay/auth/usermodel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:fintech_app/common/sharedPreferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:clearpay/common/sharedPreferences.dart';
 
-class AuthenticationState extends AppState {
+class AuthState extends AppState {
   User? user;
   late String userId;
+  Query? _profileQuery;
   UserModel? _userModel;
   bool isSignInWithGoogle = false;
   UserModel? get userModel => _userModel;
-  StreamSubscription? _profileSubscription;
-  final supabase = Supabase.instance.client;
-  UserModel? get profileUserModel => _userModel;
+  List<UserModel>? _profileUserModelList;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  UserModel get profileUserModel {
+    if (_profileUserModelList != null && _profileUserModelList!.isNotEmpty) {
+      return _profileUserModelList!.last;
+    } else {
+      return UserModel();
+    }
+  }
+
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection(USERS);
+
+  Stream<DocumentSnapshot> callStream({String? uid}) =>
+      userCollection.doc(uid).snapshots();
+
+  void removeLastUser() {
+    _profileUserModelList!.removeLast();
+  }
 
   void logoutCallback() async {
     authStatus = AuthStatus.NOT_LOGGED_IN;
     userId = '';
     _userModel = null;
     user = null;
-    if (_profileSubscription != null) {
-      await _profileSubscription!.cancel();
-      _profileSubscription = null;
-    }
+    _profileQuery = null;
     if (isSignInWithGoogle) {
       _googleSignIn.signOut();
       isSignInWithGoogle = false;
     }
-    await supabase.auth.signOut();
+    firebaseAuth.signOut();
     notifyListeners();
     await getIt<SharedPreferenceHelper>().clearPreferenceValues();
   }
@@ -46,49 +63,37 @@ class AuthenticationState extends AppState {
     notifyListeners();
   }
 
-  void databaseInit() {
+  databaseInit() {
     try {
-      if (_profileSubscription == null && user != null) {
-        _profileSubscription = supabase
-            .from('profile')
-            .stream(primaryKey: ['userId'])
-            .eq('userId', user!.id)
-            .listen((data) {
-              if (data.isNotEmpty) {
-                _onProfileChanged(data[0]);
-              }
-            });
+      if (_profileQuery == null) {
+        firestore
+            .collection(USERS)
+            .doc(user!.uid)
+            .snapshots()
+            .listen(onProfileChanged);
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Database init error: $error');
+        print(error);
       }
     }
   }
 
-  Future<String?> signIn(String email, String password,
-      {required BuildContext context}) async {
+  Future<String?> signIn(
+      BuildContext context, String email, String password) async {
     try {
       isBusy = true;
-      final response = await supabase.auth.signInWithPassword(
+      var result = await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      user = response.user;
-      userId = user!.id;
-      return user!.id;
-    } on AuthException catch (error) {
-      if (kDebugMode) {
-        print('Sign in error: ${error.message}');
-      }
-      return null;
+      user = result.user;
+      userId = user!.uid;
+      return user!.uid;
     } catch (error) {
-      if (kDebugMode) {
-        print('Unexpected error: $error');
-      }
-      return null;
-    } finally {
       isBusy = false;
+      logoutCallback();
+      return null;
     }
   }
 
@@ -96,95 +101,47 @@ class AuthenticationState extends AppState {
       {required BuildContext context, required String password}) async {
     try {
       isBusy = true;
-      final response = await supabase.auth.signUp(
+      var result = await firebaseAuth.createUserWithEmailAndPassword(
         email: userModel.email!,
         password: password,
       );
-      user = response.user;
+      user = result.user;
       authStatus = AuthStatus.LOGGED_IN;
+      result.user!.updateDisplayName(userModel.displayName);
+      result.user!.updatePhotoURL(userModel.profilePic);
       _userModel = userModel;
-      _userModel!.userId = user!.id;
+      _userModel!.userId = user!.uid;
       createUser(_userModel!, newUser: true);
-      return user!.id;
+      return user!.uid;
     } catch (error) {
-      if (kDebugMode) {
-        print('Sign up error: $error');
-      }
       isBusy = false;
       return null;
     }
   }
 
-  Future<bool> createUser(UserModel user, {bool newUser = false}) async {
-    try {
-      if (newUser) {
-        user.createdAt = DateTime.now().toUtc().toString();
-      }
-
-      if (user.userId == null || user.userId!.isEmpty) {
-        if (this.user != null) {
-          user.userId = this.user!.id;
-        } else {
-          if (kDebugMode) {
-            print('Create user error: userId is null or empty');
-          }
-          isBusy = false;
-          return false;
-        }
-      }
-
-      if (kDebugMode) {
-        print('Attempting to create/update user with data:');
-        print(user.toJson());
-      }
-
-      final response =
-          await supabase.from('profile').upsert(user.toJson()).select();
-      if (kDebugMode) {
-        print('User created/updated successfully:');
-        print(response);
-      }
-
-      _userModel = user;
-      isBusy = false;
-      return true;
-    } catch (error) {
-      if (kDebugMode) {
-        print('Create user error: $error');
-        if (error is PostgrestException) {
-          print('Postgres error code: ${error.code}');
-          print('Postgres error message: ${error.message}');
-          print('Postgres error details: ${error.details}');
-        }
-      }
-      isBusy = false;
-      return false;
+  void createUser(UserModel user, {bool newUser = false}) {
+    if (newUser) {
+      user.createdAt = DateTime.now().toUtc().toString();
     }
+    firestore.collection(USERS).doc(user.userId).set(user.toJson());
+    _userModel = user;
+    isBusy = false;
   }
 
   Future<User?> getCurrentUser() async {
     try {
       isBusy = true;
-      final session = supabase.auth.currentSession;
-      if (session != null && !session.isExpired) {
-        user = supabase.auth.currentUser;
-        if (user != null) {
-          await getProfileUser();
-          authStatus = AuthStatus.LOGGED_IN;
-          userId = user!.id;
-          databaseInit();
-        } else {
-          authStatus = AuthStatus.NOT_LOGGED_IN;
-        }
+      user = firebaseAuth.currentUser;
+      if (user != null) {
+        await getProfileUser();
+        authStatus = AuthStatus.LOGGED_IN;
+        userId = user!.uid;
       } else {
         authStatus = AuthStatus.NOT_LOGGED_IN;
       }
       isBusy = false;
       return user;
     } catch (error) {
-      if (kDebugMode) {
-        print('Get current user error: $error');
-      }
       isBusy = false;
       authStatus = AuthStatus.NOT_LOGGED_IN;
       return null;
@@ -192,69 +149,34 @@ class AuthenticationState extends AppState {
   }
 
   void reloadUser() async {
-    try {
-      final session = supabase.auth.currentSession;
-      if (session != null) {
-        await supabase.auth.refreshSession();
-        user = supabase.auth.currentUser;
-        if (user != null && user!.emailConfirmedAt != null) {
-          userModel!.isVerified = true;
-          createUser(userModel!);
-        }
-      } else {
-        authStatus = AuthStatus.NOT_LOGGED_IN;
-        notifyListeners();
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Reload user error: $error');
-      }
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-      notifyListeners();
+    await user!.reload();
+    user = firebaseAuth.currentUser;
+    if (user!.emailVerified) {
+      //userModel!.isVerified = true;
+      createUser(userModel!);
     }
   }
 
   Future<void> sendEmailVerification(BuildContext context) async {
-    try {
-      if (kDebugMode) {
-        print('Email verification is handled automatically by Supabase');
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error sending verification: $error');
-      }
-    }
+    User user = firebaseAuth.currentUser!;
+    user.sendEmailVerification().then((_) {}).catchError((error) {});
   }
 
   Future<bool> emailVerified() async {
-    await supabase.auth.refreshSession();
-    user = supabase.auth.currentUser;
-    return user?.emailConfirmedAt != null;
+    User user = firebaseAuth.currentUser!;
+    return user.emailVerified;
   }
 
   Future<void> forgetPassword(String email,
       {required BuildContext context}) async {
     try {
-      await supabase.auth
-          .resetPasswordForEmail(
-            email,
-            redirectTo: 'io.supabase.flutter://reset-callback/',
-          )
-          .then(
-            (value) {},
-          )
-          .catchError(
-        (error) {
-          if (kDebugMode) {
-            print('Password reset error: $error');
-          }
-        },
-      );
+      await firebaseAuth
+          .sendPasswordResetEmail(email: email)
+          .then((value) {})
+          .catchError((error) {});
     } catch (error) {
-      if (kDebugMode) {
-        print('Password reset error: $error');
-      }
-      return Future.value();
+      // ignore: void_checks
+      return Future.value(false);
     }
   }
 
@@ -264,6 +186,11 @@ class AuthenticationState extends AppState {
       if (image == null && bannerImage == null) {
         createUser(userModel!);
       } else {
+        if (image != null) {
+          var name = userModel!.displayName ?? user!.displayName;
+          firebaseAuth.currentUser!.updateDisplayName(name);
+          firebaseAuth.currentUser!.updatePhotoURL(userModel.profilePic);
+        }
         if (userModel != null) {
           createUser(userModel);
         } else {
@@ -272,63 +199,56 @@ class AuthenticationState extends AppState {
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Update profile error: $error');
+        print(error);
       }
     }
   }
 
   Future<UserModel?> getUserDetail(String userId) async {
-    try {
-      final data =
-          await supabase.from('profile').select().eq('userId', userId).single();
-      UserModel user = UserModel.fromJson(data);
+    UserModel? user;
+    var event = await firestore.collection(USERS).doc(userId).get();
+    final map = event.data();
+    if (map != null) {
+      user = UserModel.fromJson(map);
+      //user.key = event.id;
       return user;
-    } catch (error) {
-      if (kDebugMode) {
-        print('Get user detail error: $error');
-      }
+    } else {
       return null;
     }
   }
 
-  FutureOr<void> getProfileUser({String? userProfileId}) {
+  getProfileUser({String? userProfileId}) async {
     try {
-      userProfileId = userProfileId ?? user!.id;
-      supabase
-          .from('profile')
-          .select()
-          .eq('userId', userProfileId)
-          .single()
-          .then((data) {
-        if (userProfileId == user!.id) {
-          _userModel = UserModel.fromJson(data);
-          _userModel!.isVerified = user!.emailConfirmedAt != null;
-          if (user!.emailConfirmedAt == null) {
-            // reloadUser();
+      isBusy = true;
+      _profileUserModelList ??= [];
+      userProfileId = userProfileId ?? user!.uid;
+      DocumentSnapshot documentSnapshot =
+          await userCollection.doc(userProfileId).get();
+      var map = documentSnapshot.data() as Map<dynamic, dynamic>;
+      if (documentSnapshot.data() != null) {
+        _profileUserModelList!.add(UserModel.fromJson(map));
+        if (userProfileId == user!.uid) {
+          _userModel = _profileUserModelList!.last;
+          //_userModel!.isVerified = user!.emailVerified;
+          if (user!.emailVerified) {
+            reloadUser();
           }
-          // getIt<SharedPreferenceHelper>().saveUserProfile(_userModel!);
         }
-        isBusy = false;
-      }).catchError((error) {
-        if (kDebugMode) {
-          print('Get profile user error: $error');
-        }
-        isBusy = false;
-      });
-    } catch (error) {
-      if (kDebugMode) {
-        print('Get profile user error: $error');
       }
+      isBusy = false;
+    } catch (error) {
       isBusy = false;
     }
   }
 
-  void _onProfileChanged(Map<String, dynamic> data) {
-    final updatedUser = UserModel.fromJson(data);
-    _userModel = updatedUser;
-    getIt<SharedPreferenceHelper>().saveUserProfile(_userModel!);
-    notifyListeners();
+  void onProfileChanged(DocumentSnapshot event) {
+    var map = event.data() as Map<dynamic, dynamic>;
+    if (event.data() != null) {
+      final updatedUser = UserModel.fromJson(map);
+      if (updatedUser.userId == user!.uid) {
+        _userModel = updatedUser;
+      }
+      notifyListeners();
+    }
   }
-
-  void onProfileUpdated(dynamic data) {}
 }

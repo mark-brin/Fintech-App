@@ -15,13 +15,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
-  final String audioPath = 'Sample Audio';
+  final String audioPath = 'Assistant';
   final AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    audioPlayer.setSource(AssetSource('drums.mp3'));
+    audioPlayer.setSource(AssetSource('assistant.mp3'));
     audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
         duration = newDuration;
@@ -96,17 +96,17 @@ class _MediaPlayerState extends State<MediaPlayer> {
                         "NOW PLAYING",
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white70,
                           letterSpacing: 1.5,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       IconButton(
                         onPressed: () {},
                         icon: Icon(
-                          FontAwesomeIcons.ellipsisVertical,
                           size: 20,
                           color: Colors.white,
+                          FontAwesomeIcons.ellipsisVertical,
                         ),
                       )
                     ],
@@ -140,15 +140,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       fontSize: 24,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Artist Name",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   SizedBox(height: 30),
@@ -210,8 +201,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           ));
                         },
                         icon: Icon(
-                          FontAwesomeIcons.backward,
                           color: Colors.white70,
+                          FontAwesomeIcons.backward,
                         ),
                       ),
                       SizedBox(width: 30),
@@ -222,26 +213,26 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           height: 80,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Colors.blue[400]!, Colors.blue[700]!],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
+                              colors: [Colors.blue[400]!, Colors.blue[700]!],
                             ),
                             borderRadius: BorderRadius.circular(40),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.blue.withOpacity(0.3),
-                                spreadRadius: 2,
                                 blurRadius: 8,
+                                spreadRadius: 2,
                                 offset: Offset(0, 4),
+                                color: Colors.blue.withOpacity(0.3),
                               ),
                             ],
                           ),
                           child: Icon(
+                            size: 28,
+                            color: Colors.white,
                             isPlaying
                                 ? FontAwesomeIcons.pause
                                 : FontAwesomeIcons.play,
-                            color: Colors.white,
-                            size: 28,
                           ),
                         ),
                       ),
@@ -255,8 +246,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           ));
                         },
                         icon: Icon(
-                          FontAwesomeIcons.forward,
                           color: Colors.white70,
+                          FontAwesomeIcons.forward,
                         ),
                       ),
                     ],
@@ -268,27 +259,27 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       IconButton(
                         onPressed: () {},
                         icon: Icon(
+                          size: 20,
                           FontAwesomeIcons.repeat,
                           color: Colors.white70,
-                          size: 20,
                         ),
                       ),
                       SizedBox(width: 30),
                       IconButton(
                         onPressed: () {},
                         icon: Icon(
+                          size: 20,
                           FontAwesomeIcons.heart,
                           color: Colors.white70,
-                          size: 20,
                         ),
                       ),
                       SizedBox(width: 30),
                       IconButton(
                         onPressed: () {},
                         icon: Icon(
+                          size: 20,
                           FontAwesomeIcons.share,
                           color: Colors.white70,
-                          size: 20,
                         ),
                       ),
                     ],
@@ -313,8 +304,31 @@ class _MiniMediaplayerState extends State<MiniMediaplayer> {
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
-  final String audioPath = 'Sample Audio';
+  final String audioPath = 'Assistant';
   final AudioPlayer audioPlayer = AudioPlayer();
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer.setSource(AssetSource('assistant.mp3'));
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
 
   void playPauseAudio() {
     if (isPlaying) {
@@ -329,6 +343,13 @@ class _MiniMediaplayerState extends State<MiniMediaplayer> {
 
   String getFileName(String filePath) {
     return path.basenameWithoutExtension(filePath);
+  }
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
   }
 
   @override
@@ -352,10 +373,10 @@ class _MiniMediaplayerState extends State<MiniMediaplayer> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              'https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
               width: 50,
               height: 50,
               fit: BoxFit.cover,
+              'https://images.pexels.com/photos/1389429/pexels-photo-1389429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
             ),
           ),
           SizedBox(width: 12),
@@ -372,13 +393,6 @@ class _MiniMediaplayerState extends State<MiniMediaplayer> {
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  "Artist Name",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    color: Colors.white70,
-                  ),
                 ),
                 SizedBox(height: 8),
                 SliderTheme(
@@ -405,9 +419,9 @@ class _MiniMediaplayerState extends State<MiniMediaplayer> {
           ),
           IconButton(
             icon: Icon(
-              isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
-              color: Colors.white,
               size: 20,
+              color: Colors.white,
+              isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
             ),
             onPressed: playPauseAudio,
           ),

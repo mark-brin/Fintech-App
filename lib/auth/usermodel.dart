@@ -2,10 +2,10 @@ import 'package:equatable/equatable.dart';
 
 // ignore: must_be_immutable
 class UserModel extends Equatable {
+  int? balance;
   String? email;
   String? phone;
   String? userId;
-  bool? isVerified;
   String? createdAt;
   String? profilePic;
   String? displayName;
@@ -13,9 +13,9 @@ class UserModel extends Equatable {
     this.email,
     this.phone,
     this.userId,
+    this.balance,
     this.createdAt,
     this.profilePic,
-    this.isVerified,
     this.displayName,
   });
   UserModel.fromJson(Map<dynamic, dynamic>? map) {
@@ -25,28 +25,28 @@ class UserModel extends Equatable {
     email = map['email'];
     phone = map['phone'];
     userId = map['userId'];
+    balance = map['balance'];
     createdAt = map['createdAt'];
-    isVerified = map['isVerified'];
     profilePic = map['profilePic'];
     displayName = map['displayName'];
   }
   toJson() {
     return {
-      "phone": phone,
-      "email": email,
-      "userId": userId,
+      'email': email,
+      'phone': phone,
+      'userId': userId,
+      'balance': balance,
       'createdAt': createdAt,
-      'isVerified': isVerified,
       'profilePic': profilePic,
       'displayName': displayName,
     };
   }
 
   UserModel copyWith({
+    int? balance,
     String? email,
     String? phone,
     String? userId,
-    bool? isVerified,
     String? createdAt,
     String? profilePic,
     String? displayName,
@@ -55,8 +55,8 @@ class UserModel extends Equatable {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       userId: userId ?? this.userId,
+      balance: balance ?? this.balance,
       createdAt: createdAt ?? this.createdAt,
-      isVerified: isVerified ?? this.isVerified,
       profilePic: profilePic ?? this.profilePic,
       displayName: displayName ?? this.displayName,
     );
@@ -67,6 +67,7 @@ class UserModel extends Equatable {
         email,
         phone,
         userId,
+        balance,
         createdAt,
         profilePic,
         displayName,

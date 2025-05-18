@@ -1,13 +1,15 @@
+import 'package:clearpay/state/transactionState.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/authstate.dart';
+import 'package:clearpay/wallet/allPayments.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Wallet extends StatelessWidget {
   const Wallet({super.key});
   String getEmailPrefix(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context);
+    var auth = Provider.of<AuthState>(context);
     String email = auth.user!.email ?? '';
     int atIndex = email.indexOf('@');
     if (atIndex != -1) {
@@ -15,6 +17,40 @@ class Wallet extends StatelessWidget {
     } else {
       return email;
     }
+  }
+
+  String formatDate(String dateString) {
+    final DateTime date = DateTime.parse(dateString);
+    final DateTime now = DateTime.now();
+    final Duration difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return 'Today';
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else {
+      return '${date.day} ${getMonth(date.month)} ${date.year}';
+    }
+  }
+
+  String getMonth(int month) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return months[month - 1];
   }
 
   @override
@@ -26,19 +62,18 @@ class Wallet extends StatelessWidget {
         title: Text(
           'Wallet',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.bell, color: Colors.white, size: 20),
             onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(FontAwesomeIcons.ellipsisVertical,
-                color: Colors.white, size: 20),
-            onPressed: () {},
+            icon: Icon(
+              size: 20,
+              color: Colors.white,
+              FontAwesomeIcons.ellipsisVertical,
+            ),
           ),
         ],
       ),
@@ -46,18 +81,19 @@ class Wallet extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildBalanceCard(context),
+            buildBalanceCard(context),
             SizedBox(height: 20),
-            _buildQuickActions(),
+            buildQuickActions(context),
             SizedBox(height: 20),
-            _buildTransactionHistory(),
+            buildTransactionHistory(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBalanceCard(BuildContext context) {
+  Widget buildBalanceCard(BuildContext context) {
+    var auth = Provider.of<AuthState>(context, listen: false);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -76,46 +112,18 @@ class Wallet extends StatelessWidget {
               'Total Balance',
               style: GoogleFonts.montserrat(
                 fontSize: 16,
-                color: Colors.white.withOpacity(0.8),
                 fontWeight: FontWeight.w500,
+                color: Colors.white.withOpacity(0.8),
               ),
             ),
             SizedBox(height: 8),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '₹ 5,250.20',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 32,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(FontAwesomeIcons.arrowUp,
-                          size: 12, color: Colors.green),
-                      SizedBox(width: 4),
-                      Text(
-                        '2.5%',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          color: Colors.green,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Text(
+              '₹ ${auth.userModel!.balance.toString()}',
+              style: GoogleFonts.montserrat(
+                fontSize: 32,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 20),
             Container(
@@ -131,7 +139,7 @@ class Wallet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'UPI ID',
+                        'Payment ID',
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: Colors.white.withOpacity(0.7),
@@ -156,8 +164,10 @@ class Wallet extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
                     ),
                     child: Text(
                       'Add Money',
@@ -175,7 +185,7 @@ class Wallet extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget buildQuickActions(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -185,22 +195,45 @@ class Wallet extends StatelessWidget {
             'Quick Actions',
             style: GoogleFonts.montserrat(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
               color: Colors.grey[800],
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildActionButton(FontAwesomeIcons.moneyBillTransfer,
-                  'Send Money', Colors.blue[700]!),
-              buildActionButton(FontAwesomeIcons.creditCard, 'Pay Bills',
-                  Colors.purple[700]!),
-              buildActionButton(FontAwesomeIcons.clockRotateLeft, 'History',
-                  Colors.orange[700]!),
               buildActionButton(
-                  FontAwesomeIcons.rightLeft, 'Exchange', Colors.green[700]!),
+                FontAwesomeIcons.moneyBillTransfer,
+                'Send Money',
+                Colors.blue[700]!,
+                () {},
+              ),
+              buildActionButton(
+                FontAwesomeIcons.creditCard,
+                'Pay Bills',
+                Colors.purple[700]!,
+                () {},
+              ),
+              buildActionButton(
+                FontAwesomeIcons.clockRotateLeft,
+                'History',
+                Colors.orange[700]!,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TransactionHistory(),
+                    ),
+                  );
+                },
+              ),
+              buildActionButton(
+                FontAwesomeIcons.rightLeft,
+                'Exchange',
+                Colors.green[700]!,
+                () {},
+              ),
             ],
           ),
         ],
@@ -208,9 +241,10 @@ class Wallet extends StatelessWidget {
     );
   }
 
-  Widget buildActionButton(IconData icon, String label, Color color) {
+  Widget buildActionButton(
+      IconData icon, String label, Color color, void Function() onPress) {
     return IconButton(
-      onPressed: () {},
+      onPressed: onPress,
       icon: Column(
         children: [
           Container(
@@ -236,65 +270,102 @@ class Wallet extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionHistory() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Transaction History',
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'See All',
+  Widget buildTransactionHistory(BuildContext context) {
+    final state = Provider.of<AuthState>(context, listen: false);
+    final transaction = Provider.of<TransactionState>(context);
+    return RefreshIndicator(
+      onRefresh: () async {
+        transaction.getDataFromDatabase(context);
+        return Future.value();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Payments History',
                   style: GoogleFonts.montserrat(
-                    fontSize: 14,
+                    fontSize: 17.5,
+                    color: Colors.grey[800],
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF334D8F),
                   ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 15),
-          buildTransactionItem(
-            'Amazon Pay',
-            'Shopping',
-            '- ₹1,200.00',
-            FontAwesomeIcons.bagShopping,
-            Colors.blue[600]!,
-            '12 Mar 2025',
-            isDebit: true,
-          ),
-          buildTransactionItem(
-            'Netflix',
-            'Entertainment',
-            '- ₹649.00',
-            FontAwesomeIcons.tv,
-            Colors.red[600]!,
-            '08 Mar 2025',
-            isDebit: true,
-          ),
-          buildTransactionItem(
-            'Electricity Bill',
-            'Utilities',
-            '- ₹1,450.00',
-            FontAwesomeIcons.bolt,
-            Colors.orange[600]!,
-            '05 Mar 2025',
-            isDebit: true,
-          ),
-        ],
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransactionHistory(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'See All',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: Color(0xFF334D8F),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 15),
+            transaction.userTransactionsList!.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: Column(
+                        children: [
+                          Icon(
+                            FontAwesomeIcons.clockRotateLeft,
+                            size: 40,
+                            color: Colors.grey[400],
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'No transactions yet',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: List.generate(
+                      transaction.userTransactionsList!.length > 5
+                          ? 5
+                          : transaction.userTransactionsList!.length,
+                      (index) {
+                        final tx = transaction.userTransactionsList![index];
+                        final bool isDebit =
+                            tx.senderId == state.userModel!.userId;
+                        final String formattedDate = formatDate(tx.createdAt!);
+
+                        return buildTransactionItem(
+                          isDebit ? tx.recipientName! : tx.senderName!,
+                          isDebit ? 'Sent' : 'Received',
+                          isDebit ? '- ₹${tx.amount}' : '+ ₹${tx.amount}',
+                          isDebit
+                              ? FontAwesomeIcons.arrowUp
+                              : FontAwesomeIcons.arrowDown,
+                          isDebit ? Colors.red[600]! : Colors.green[600]!,
+                          formattedDate,
+                          isDebit: isDebit,
+                        );
+                      },
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }
@@ -310,9 +381,9 @@ class Wallet extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -325,11 +396,7 @@ class Wallet extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 22,
-            ),
+            child: Icon(icon, size: 22, color: color),
           ),
           SizedBox(width: 15),
           Expanded(
@@ -340,8 +407,8 @@ class Wallet extends StatelessWidget {
                   title,
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
                     color: Colors.grey[800],
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 4),

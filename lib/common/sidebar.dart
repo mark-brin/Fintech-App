@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:clearpay/profile/profile.dart';
+import 'package:clearpay/auth/onboarding.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appstate.dart';
-import 'package:fintech_app/state/authstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Sidebar extends StatefulWidget {
@@ -15,23 +14,17 @@ class Sidebar extends StatefulWidget {
 }
 
 class _SidebarState extends State<Sidebar> {
-  Future<String> getName() async {
-    final response = await http.get(Uri.parse('https://dummyjson.com/users/1'));
-
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data['firstName'] +
-          '' +
-          data['maidenName'] +
-          '' +
-          data['lastName'];
-    } else {
-      throw Exception('Failed to load user');
-    }
+  void logOut() {
+    final state = Provider.of<AuthState>(context, listen: false);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => OnboardingPage()),
+    );
+    state.logoutCallback();
   }
 
   Widget menuHeader() {
-    var auth = Provider.of<AuthenticationState>(context);
+    var auth = Provider.of<AuthState>(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
@@ -54,10 +47,10 @@ class _SidebarState extends State<Sidebar> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFF334D8F).withOpacity(0.3),
                       blurRadius: 10,
                       spreadRadius: 1,
                       offset: Offset(0, 4),
+                      color: Color(0xFF334D8F).withOpacity(0.3),
                     ),
                   ],
                 ),
@@ -73,7 +66,7 @@ class _SidebarState extends State<Sidebar> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      auth.user!.userMetadata!['displayName'] ?? 'Full Name',
+                      auth.user!.displayName!,
                       style: GoogleFonts.montserrat(
                         fontSize: 18,
                         color: Colors.grey[800],
@@ -96,8 +89,10 @@ class _SidebarState extends State<Sidebar> {
           SizedBox(height: 20),
           InkWell(
             onTap: () {
-              var app = Provider.of<AppState>(context, listen: false);
-              app.setPageIndex = 4;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
             },
             borderRadius: BorderRadius.circular(12),
             child: Container(
@@ -136,7 +131,7 @@ class _SidebarState extends State<Sidebar> {
     );
   }
 
-  Widget _menuListRowButton(String title,
+  Widget menuListRowButton(String title,
       {Function? onPressed, IconData? icon, bool isEnable = false}) {
     return InkWell(
       onTap: () {
@@ -192,25 +187,22 @@ class _SidebarState extends State<Sidebar> {
             Expanded(
               child: Column(
                 children: [
-                  _menuListRowButton(
+                  menuListRowButton(
                     'Help Center',
                     isEnable: true,
                     onPressed: () {},
                     icon: FontAwesomeIcons.circleQuestion,
                   ),
-                  _menuListRowButton(
+                  menuListRowButton(
                     'Settings and privacy',
                     isEnable: true,
                     onPressed: () {},
                     icon: FontAwesomeIcons.gear,
                   ),
-                  _menuListRowButton(
+                  menuListRowButton(
                     'Logout',
                     isEnable: true,
-                    onPressed: () {
-                      var auth = Provider.of<AuthenticationState>(context);
-                      auth.logoutCallback();
-                    },
+                    onPressed: logOut,
                     icon: FontAwesomeIcons.arrowRightFromBracket,
                   ),
                 ],
@@ -222,10 +214,7 @@ class _SidebarState extends State<Sidebar> {
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 border: Border(
-                  top: BorderSide(
-                    color: Colors.grey[200]!,
-                    width: 1,
-                  ),
+                  top: BorderSide(width: 1, color: Colors.grey[200]!),
                 ),
               ),
               child: Column(
@@ -234,15 +223,15 @@ class _SidebarState extends State<Sidebar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 32,
-                        height: 32,
+                        width: 32.5,
+                        height: 32.5,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Color(0xFF334D8F).withOpacity(0.1),
                         ),
                         child: Icon(
-                          FontAwesomeIcons.headset,
                           size: 16,
+                          FontAwesomeIcons.headset,
                           color: Color(0xFF334D8F),
                         ),
                       ),
@@ -251,19 +240,11 @@ class _SidebarState extends State<Sidebar> {
                         'Customer Support',
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    'App Version 1.0.0',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                    ),
                   ),
                 ],
               ),

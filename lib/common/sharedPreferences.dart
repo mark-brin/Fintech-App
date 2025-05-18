@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:fintech_app/auth/usermodel.dart';
-import 'package:fintech_app/common/link_media_info.dart';
+import 'package:clearpay/auth/usermodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceHelper {
@@ -30,20 +29,6 @@ class SharedPreferenceHelper {
         .getString(UserPreferenceKey.UserProfile.toString());
     if (jsonString == null) return null;
     return UserModel.fromJson(json.decode(jsonString));
-  }
-
-  Future<bool> saveLinkMediaInfo(String key, LinkMediaInfo model) async {
-    return (await SharedPreferences.getInstance())
-        .setString(key, json.encode(model.toJson()));
-  }
-
-  Future<LinkMediaInfo?> getLinkMediaInfo(String key) async {
-    final String? jsonString =
-        (await SharedPreferences.getInstance()).getString(key);
-    if (jsonString == null) {
-      return null;
-    }
-    return LinkMediaInfo.fromJson(json.decode(jsonString));
   }
 }
 

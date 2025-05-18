@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fintech_app/state/appstate.dart';
-import 'package:fintech_app/dashboard/dashboard.dart';
+import 'package:clearpay/state/appstate.dart';
+import 'package:clearpay/dashboard/dashboard.dart';
 
 class FakeHttpClient extends http.BaseClient {
   final Map<String, http.Response> _responses = {};

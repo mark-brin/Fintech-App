@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.fintech"
+    namespace = "com.clearpay"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.fintech"
+        applicationId = "com.clearpay"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

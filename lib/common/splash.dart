@@ -3,11 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:fintech_app/common/enums.dart';
+import 'package:clearpay/common/enums.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/authstate.dart';
-import 'package:fintech_app/auth/onboarding.dart';
-import 'package:fintech_app/dashboard/dashboard.dart';
+import 'package:clearpay/state/authstate.dart';
+import 'package:clearpay/auth/onboarding.dart';
+import 'package:clearpay/dashboard/dashboard.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -74,7 +74,7 @@ class _SplashPageState extends State<SplashPage>
   void timer() async {
     Future.delayed(Duration(seconds: 1)).then(
       (_) {
-        var state = Provider.of<AuthenticationState>(context, listen: false);
+        var state = Provider.of<AuthState>(context, listen: false);
         state.getCurrentUser();
       },
     );
@@ -119,14 +119,7 @@ class _SplashPageState extends State<SplashPage>
                             shape: BoxShape.circle,
                             color: Colors.white.withOpacity(0.15),
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.all(15),
-                            //child: Image.asset(
-                            //  width: 50,
-                            //  height: 50,
-                            //  'assets/images/icon-480.png',
-                            //),
-                          ),
+                          child: Padding(padding: EdgeInsets.all(15)),
                         ),
                       ),
                     ),
@@ -137,7 +130,7 @@ class _SplashPageState extends State<SplashPage>
               FadeTransition(
                 opacity: fadeAnimation,
                 child: Text(
-                  "Fintech App",
+                  "ClearPay",
                   style: GoogleFonts.montserrat(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -194,7 +187,7 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
-    var state = Provider.of<AuthenticationState>(context, listen: false);
+    var state = Provider.of<AuthState>(context, listen: false);
     return Scaffold(
       body: state.authStatus == AuthStatus.NOT_DETERMINED
           ? body()

@@ -1,4 +1,4 @@
-package com.fintech
+package com.clearpay
 
 import io.flutter.embedding.android.FlutterActivity
 

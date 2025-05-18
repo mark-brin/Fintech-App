@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appstate.dart';
+import 'package:clearpay/state/appstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MainNavBar extends StatefulWidget {
@@ -16,7 +16,7 @@ class _MainNavBarState extends State<MainNavBar> {
     super.initState();
   }
 
-  Widget _iconList() {
+  Widget iconList() {
     var state = Provider.of<AppState>(context);
     return Container(
       height: 75,
@@ -164,6 +164,6 @@ class _MainNavBarState extends State<MainNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return _iconList();
+    return iconList();
   }
 }

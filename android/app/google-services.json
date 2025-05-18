@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "544439524117",
+    "project_id": "fintech-app-7b9a9",
+    "storage_bucket": "fintech-app-7b9a9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544439524117:android:c2ce5405680b596776271c",
+        "android_client_info": {
+          "package_name": "com.clearpay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB14J_fh0Zayne_EqI32q28z6izptPiMeA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

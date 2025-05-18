@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Transactions extends StatelessWidget {
   const Transactions({super.key});
@@ -14,18 +14,21 @@ class Transactions extends StatelessWidget {
         title: Text(
           'Transactions',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.sliders, color: Colors.white, size: 20),
             onPressed: () {},
+            icon: Icon(FontAwesomeIcons.sliders, color: Colors.white, size: 20),
           ),
           IconButton(
-            icon: Icon(FontAwesomeIcons.magnifyingGlass,
-                color: Colors.white, size: 20),
+            icon: Icon(
+              size: 20,
+              color: Colors.white,
+              FontAwesomeIcons.magnifyingGlass,
+            ),
             onPressed: () {},
           ),
         ],
@@ -34,18 +37,18 @@ class Transactions extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTransactionSummary(),
+            buildTransactionSummary(),
             SizedBox(height: 20),
-            _buildTransactionFilters(),
+            buildTransactionFilters(),
             SizedBox(height: 20),
-            _buildTransactionList(),
+            buildTransactionList(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTransactionSummary() {
+  Widget buildTransactionSummary() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -55,40 +58,11 @@ class Transactions extends StatelessWidget {
           bottomRight: Radius.circular(30),
         ),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSummaryCard(
-                    'Income',
-                    '₹48,250.00',
-                    '+12.5%',
-                    FontAwesomeIcons.arrowDown,
-                    Colors.green[400]!,
-                  ),
-                ),
-                SizedBox(width: 15),
-                Expanded(
-                  child: _buildSummaryCard(
-                    'Expenses',
-                    '₹32,180.50',
-                    '+8.2%',
-                    FontAwesomeIcons.arrowUp,
-                    Colors.red[400]!,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      child: Padding(padding: EdgeInsets.all(7.5)),
     );
   }
 
-  Widget _buildSummaryCard(String title, String amount, String percentage,
+  Widget buildSummaryCard(String title, String amount, String percentage,
       IconData icon, Color color) {
     return Container(
       padding: EdgeInsets.all(15),
@@ -104,14 +78,10 @@ class Transactions extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
                   shape: BoxShape.circle,
+                  color: color.withOpacity(0.2),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 14,
-                ),
+                child: Icon(icon, size: 14, color: color),
               ),
               SizedBox(width: 8),
               Text(
@@ -154,7 +124,7 @@ class Transactions extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionFilters() {
+  Widget buildTransactionFilters() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -167,8 +137,8 @@ class Transactions extends StatelessWidget {
                 'Recent Transactions',
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
-                  fontWeight: FontWeight.w600,
                   color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               Container(
@@ -178,9 +148,9 @@ class Transactions extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       spreadRadius: 1,
+                      color: Colors.black.withOpacity(0.05),
                     ),
                   ],
                 ),
@@ -190,15 +160,15 @@ class Transactions extends StatelessWidget {
                       'March 2025',
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
-                        fontWeight: FontWeight.w600,
                         color: Color(0xFF334D8F),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(width: 5),
                     Icon(
-                      FontAwesomeIcons.chevronDown,
                       size: 12,
                       color: Color(0xFF334D8F),
+                      FontAwesomeIcons.chevronDown,
                     ),
                   ],
                 ),
@@ -210,12 +180,12 @@ class Transactions extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip('All', true),
-                _buildFilterChip('Income', false),
-                _buildFilterChip('Expenses', false),
-                _buildFilterChip('Shopping', false),
-                _buildFilterChip('Food', false),
-                _buildFilterChip('Travel', false),
+                buildFilterChip('All', true),
+                buildFilterChip('Income', false),
+                buildFilterChip('Expenses', false),
+                buildFilterChip('Shopping', false),
+                buildFilterChip('Food', false),
+                buildFilterChip('Travel', false),
               ],
             ),
           ),
@@ -224,7 +194,7 @@ class Transactions extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChip(String label, bool isSelected) {
+  Widget buildFilterChip(String label, bool isSelected) {
     return Container(
       margin: EdgeInsets.only(right: 10),
       child: FilterChip(
@@ -251,14 +221,14 @@ class Transactions extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionList() {
+  Widget buildTransactionList() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDateDivider('Today, 15 Mar 2025'),
-          _buildTransactionItem(
+          buildDateDivider('Today, 15 Mar 2025'),
+          buildTransactionItem(
             'Amazon Pay',
             'Shopping',
             '- ₹1,200.00',
@@ -267,7 +237,7 @@ class Transactions extends StatelessWidget {
             Colors.blue[600]!,
             isDebit: true,
           ),
-          _buildTransactionItem(
+          buildTransactionItem(
             'Food Delivery',
             'Food & Dining',
             '- ₹450.00',
@@ -276,8 +246,8 @@ class Transactions extends StatelessWidget {
             Colors.orange[600]!,
             isDebit: true,
           ),
-          _buildDateDivider('Yesterday, 14 Mar 2025'),
-          _buildTransactionItem(
+          buildDateDivider('Yesterday, 14 Mar 2025'),
+          buildTransactionItem(
             'Salary Credit',
             'Income',
             '+ ₹45,000.00',
@@ -286,7 +256,7 @@ class Transactions extends StatelessWidget {
             Colors.green[600]!,
             isDebit: false,
           ),
-          _buildTransactionItem(
+          buildTransactionItem(
             'Uber Ride',
             'Transportation',
             '- ₹350.00',
@@ -295,8 +265,8 @@ class Transactions extends StatelessWidget {
             Colors.purple[600]!,
             isDebit: true,
           ),
-          _buildDateDivider('12 Mar 2025'),
-          _buildTransactionItem(
+          buildDateDivider('12 Mar 2025'),
+          buildTransactionItem(
             'Netflix',
             'Entertainment',
             '- ₹649.00',
@@ -305,7 +275,7 @@ class Transactions extends StatelessWidget {
             Colors.red[600]!,
             isDebit: true,
           ),
-          _buildTransactionItem(
+          buildTransactionItem(
             'Electricity Bill',
             'Utilities',
             '- ₹1,450.00',
@@ -314,7 +284,7 @@ class Transactions extends StatelessWidget {
             Colors.amber[700]!,
             isDebit: true,
           ),
-          _buildTransactionItem(
+          buildTransactionItem(
             'Freelance Payment',
             'Income',
             '+ ₹3,250.00',
@@ -323,8 +293,8 @@ class Transactions extends StatelessWidget {
             Colors.green[600]!,
             isDebit: false,
           ),
-          _buildDateDivider('10 Mar 2025'),
-          _buildTransactionItem(
+          buildDateDivider('10 Mar 2025'),
+          buildTransactionItem(
             'Gym Membership',
             'Health & Fitness',
             '- ₹1,800.00',
@@ -333,7 +303,7 @@ class Transactions extends StatelessWidget {
             Colors.indigo[600]!,
             isDebit: true,
           ),
-          _buildTransactionItem(
+          buildTransactionItem(
             'Interest Credit',
             'Income',
             '+ ₹125.50',
@@ -347,7 +317,7 @@ class Transactions extends StatelessWidget {
     );
   }
 
-  Widget _buildDateDivider(String date) {
+  Widget buildDateDivider(String date) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -372,7 +342,7 @@ class Transactions extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(String title, String subtitle, String amount,
+  Widget buildTransactionItem(String title, String subtitle, String amount,
       String time, IconData icon, Color color,
       {required bool isDebit}) {
     return Container(

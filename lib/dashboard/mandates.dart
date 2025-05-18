@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Mandates extends StatelessWidget {
@@ -16,35 +14,36 @@ class Mandates extends StatelessWidget {
         title: Text(
           'Mandates',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            var app = Provider.of<AppState>(context, listen: false);
-            app.pageController.animateToPage(
-              0,
-              curve: Curves.easeInOut,
-              duration: Duration(milliseconds: 300),
-            );
-            app.setPageIndex = 0;
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white),
+        //   onPressed: () {
+        //     var app = Provider.of<AppState>(context, listen: false);
+        //     app.pageController.animateToPage(
+        //       0,
+        //       curve: Curves.easeInOut,
+        //       duration: Duration(milliseconds: 300),
+        //     );
+        //     app.setPageIndex = 0;
+        //   },
+        // ),
         actions: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.circleInfo,
-                color: Colors.white, size: 20),
-            onPressed: () {
-              // Show info about mandates
-            },
+            icon: Icon(
+              size: 20,
+              color: Colors.white,
+              FontAwesomeIcons.circleInfo,
+            ),
+            onPressed: () {},
           ),
         ],
       ),
       body: Column(
         children: [
-          _buildHeaderSection(),
+          buildHeaderSection(),
           Expanded(
             child: DefaultTabController(
               length: 2,
@@ -57,9 +56,9 @@ class Mandates extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 10,
                           spreadRadius: 1,
+                          color: Colors.black.withOpacity(0.05),
                         ),
                       ],
                     ),
@@ -87,8 +86,8 @@ class Mandates extends StatelessWidget {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _buildActiveMandatesTab(),
-                        _buildExpiredMandatesTab(),
+                        buildActiveMandatesTab(),
+                        buildExpiredMandatesTab(),
                       ],
                     ),
                   ),
@@ -99,16 +98,14 @@ class Mandates extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Create new mandate
-        },
+        onPressed: () {},
         backgroundColor: Color(0xFF334D8F),
         child: Icon(FontAwesomeIcons.plus, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildHeaderSection() {
+  Widget buildHeaderSection() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -137,9 +134,9 @@ class Mandates extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      FontAwesomeIcons.fileContract,
-                      color: Colors.white,
                       size: 20,
+                      color: Colors.white,
+                      FontAwesomeIcons.fileContract,
                     ),
                   ),
                   SizedBox(width: 15),
@@ -175,13 +172,13 @@ class Mandates extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveMandatesTab() {
+  Widget buildActiveMandatesTab() {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildMandateCard(
+          buildMandateCard(
             'Electricity Bill',
             'Power Distribution Company',
             'Up to ₹2,000/month',
@@ -190,7 +187,7 @@ class Mandates extends StatelessWidget {
             true,
             'high',
           ),
-          _buildMandateCard(
+          buildMandateCard(
             'Netflix Subscription',
             'Netflix Entertainment Services',
             'Fixed ₹649/month',
@@ -199,7 +196,7 @@ class Mandates extends StatelessWidget {
             true,
             'medium',
           ),
-          _buildMandateCard(
+          buildMandateCard(
             'Health Insurance',
             'Star Health Insurance',
             'Fixed ₹5,000/quarter',
@@ -208,7 +205,7 @@ class Mandates extends StatelessWidget {
             true,
             'medium',
           ),
-          _buildMandateCard(
+          buildMandateCard(
             'Gym Membership',
             'Fitness First',
             'Fixed ₹1,800/month',
@@ -217,7 +214,7 @@ class Mandates extends StatelessWidget {
             true,
             'low',
           ),
-          _buildMandateCard(
+          buildMandateCard(
             'Internet Bill',
             'Airtel Broadband',
             'Up to ₹1,500/month',
@@ -231,13 +228,13 @@ class Mandates extends StatelessWidget {
     );
   }
 
-  Widget _buildExpiredMandatesTab() {
+  Widget buildExpiredMandatesTab() {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildMandateCard(
+          buildMandateCard(
             'Old Mobile Plan',
             'Jio Telecommunications',
             'Fixed ₹499/month',
@@ -246,7 +243,7 @@ class Mandates extends StatelessWidget {
             false,
             'low',
           ),
-          _buildMandateCard(
+          buildMandateCard(
             'Magazine Subscription',
             'Reader\'s Digest',
             'Fixed ₹1,200/year',
@@ -255,7 +252,7 @@ class Mandates extends StatelessWidget {
             false,
             'low',
           ),
-          _buildMandateCard(
+          buildMandateCard(
             'Previous Gym',
             'Gold\'s Gym',
             'Fixed ₹2,200/month',
@@ -264,7 +261,7 @@ class Mandates extends StatelessWidget {
             false,
             'low',
           ),
-          _buildEmptyState(
+          buildEmptyState(
             'No more expired mandates',
             'Older expired mandates are automatically removed after 6 months.',
             FontAwesomeIcons.clockRotateLeft,
@@ -274,17 +271,9 @@ class Mandates extends StatelessWidget {
     );
   }
 
-  Widget _buildMandateCard(
-    String title,
-    String merchant,
-    String amount,
-    String schedule,
-    String validity,
-    bool isActive,
-    String priority,
-  ) {
+  Widget buildMandateCard(String title, String merchant, String amount,
+      String schedule, String validity, bool isActive, String priority) {
     Color priorityColor;
-
     switch (priority) {
       case 'high':
         priorityColor = Colors.red[600]!;
@@ -303,14 +292,14 @@ class Mandates extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
         border: Border.all(
-          color: isActive ? priorityColor.withOpacity(0.3) : Colors.grey[300]!,
           width: 1,
+          color: isActive ? priorityColor.withOpacity(0.3) : Colors.grey[300]!,
         ),
       ),
       child: Padding(
@@ -330,9 +319,9 @@ class Mandates extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    _getIconForTitle(title),
-                    color: isActive ? priorityColor : Colors.grey[600],
                     size: 24,
+                    getIconForTitle(title),
+                    color: isActive ? priorityColor : Colors.grey[600],
                   ),
                 ),
                 SizedBox(width: 15),
@@ -344,8 +333,8 @@ class Mandates extends StatelessWidget {
                         title,
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -383,8 +372,8 @@ class Mandates extends StatelessWidget {
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: Colors.grey[200]!,
                   width: 1,
+                  color: Colors.grey[200]!,
                 ),
               ),
               child: Column(
@@ -392,9 +381,9 @@ class Mandates extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        FontAwesomeIcons.indianRupeeSign,
                         size: 14,
                         color: Colors.grey[600],
+                        FontAwesomeIcons.indianRupeeSign,
                       ),
                       SizedBox(width: 10),
                       Text(
@@ -410,8 +399,8 @@ class Mandates extends StatelessWidget {
                         amount,
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -420,9 +409,9 @@ class Mandates extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        FontAwesomeIcons.calendarDays,
                         size: 14,
                         color: Colors.grey[600],
+                        FontAwesomeIcons.calendarDays,
                       ),
                       SizedBox(width: 10),
                       Text(
@@ -439,8 +428,8 @@ class Mandates extends StatelessWidget {
                           schedule,
                           style: GoogleFonts.montserrat(
                             fontSize: 12,
-                            fontWeight: FontWeight.w600,
                             color: Colors.grey[800],
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -463,8 +452,8 @@ class Mandates extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        FontAwesomeIcons.clock,
                         size: 12,
+                        FontAwesomeIcons.clock,
                         color: isActive ? priorityColor : Colors.grey[600],
                       ),
                       SizedBox(width: 5),
@@ -482,9 +471,7 @@ class Mandates extends StatelessWidget {
                 Spacer(),
                 if (isActive)
                   OutlinedButton(
-                    onPressed: () {
-                      // Revoke mandate
-                    },
+                    onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red[600],
                       side: BorderSide(color: Colors.red[600]!),
@@ -503,17 +490,17 @@ class Mandates extends StatelessWidget {
                   ),
                 if (!isActive)
                   OutlinedButton(
-                    onPressed: () {
-                      // Renew mandate
-                    },
+                    onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Color(0xFF334D8F),
                       side: BorderSide(color: Color(0xFF334D8F)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
                     ),
                     child: Text(
                       'Renew',
@@ -530,7 +517,7 @@ class Mandates extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(String title, String subtitle, IconData icon) {
+  Widget buildEmptyState(String title, String subtitle, IconData icon) {
     return Container(
       margin: EdgeInsets.only(top: 30),
       padding: EdgeInsets.all(20),
@@ -540,9 +527,9 @@ class Mandates extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -558,8 +545,8 @@ class Mandates extends StatelessWidget {
             title,
             style: GoogleFonts.montserrat(
               fontSize: 16,
-              fontWeight: FontWeight.w600,
               color: Colors.grey[800],
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: 10),
@@ -576,7 +563,7 @@ class Mandates extends StatelessWidget {
     );
   }
 
-  IconData _getIconForTitle(String title) {
+  IconData getIconForTitle(String title) {
     if (title.contains('Electricity')) {
       return FontAwesomeIcons.bolt;
     } else if (title.contains('Netflix') || title.contains('Magazine')) {

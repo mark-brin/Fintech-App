@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fintech_app/state/appstate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Approvals extends StatelessWidget {
@@ -16,32 +14,32 @@ class Approvals extends StatelessWidget {
         title: Text(
           'Approve to Pay',
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
             color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            var app = Provider.of<AppState>(context, listen: false);
-            app.pageController.animateToPage(
-              0,
-              curve: Curves.easeInOut,
-              duration: Duration(milliseconds: 300),
-            );
-            app.setPageIndex = 0;
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white),
+        //   onPressed: () {
+        //     var app = Provider.of<AppState>(context, listen: false);
+        //     app.pageController.animateToPage(
+        //       0,
+        //       curve: Curves.easeInOut,
+        //       duration: Duration(milliseconds: 300),
+        //     );
+        //     app.setPageIndex = 0;
+        //   },
+        // ),
         actions: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.bell, color: Colors.white, size: 20),
             onPressed: () {},
+            icon: Icon(FontAwesomeIcons.bell, color: Colors.white, size: 20),
           ),
         ],
       ),
       body: Column(
         children: [
-          _buildHeaderSection(),
+          buildHeaderSection(),
           Expanded(
             child: DefaultTabController(
               length: 2,
@@ -54,9 +52,9 @@ class Approvals extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 10,
                           spreadRadius: 1,
+                          color: Colors.black.withOpacity(0.05),
                         ),
                       ],
                     ),
@@ -84,8 +82,8 @@ class Approvals extends StatelessWidget {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _buildPendingApprovalsTab(),
-                        _buildApprovalHistoryTab(),
+                        buildPendingApprovalsTab(),
+                        buildApprovalHistoryTab(),
                       ],
                     ),
                   ),
@@ -98,7 +96,7 @@ class Approvals extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderSection() {
+  Widget buildHeaderSection() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -123,13 +121,13 @@ class Approvals extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
                     ),
                     child: Icon(
-                      FontAwesomeIcons.userCheck,
-                      color: Colors.white,
                       size: 20,
+                      color: Colors.white,
+                      FontAwesomeIcons.userCheck,
                     ),
                   ),
                   SizedBox(width: 15),
@@ -141,8 +139,8 @@ class Approvals extends StatelessWidget {
                           '3 Pending Approvals',
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         SizedBox(height: 5),
@@ -165,7 +163,7 @@ class Approvals extends StatelessWidget {
     );
   }
 
-  Widget _buildPendingApprovalsTab() {
+  Widget buildPendingApprovalsTab() {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -195,60 +193,55 @@ class Approvals extends StatelessWidget {
             'Due in 5 days',
             'low',
           ),
-          // _buildEmptyState(
-          //   'No more pending approvals',
-          //   'You\'ve reviewed all transactions requiring your approval.',
-          //   FontAwesomeIcons.clipboardCheck,
-          // ),
         ],
       ),
     );
   }
 
-  Widget _buildApprovalHistoryTab() {
+  Widget buildApprovalHistoryTab() {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDateDivider('March 2025'),
-          _buildHistoryCard(
+          buildDateDivider('March 2025'),
+          buildHistoryCard(
             'Mobile Bill',
             'Monthly payment to Airtel',
             '₹999.00',
             'Mar 10, 2025',
             true,
           ),
-          _buildHistoryCard(
+          buildHistoryCard(
             'Internet Bill',
             'Monthly broadband payment',
             '₹1,499.00',
             'Mar 5, 2025',
             true,
           ),
-          _buildHistoryCard(
+          buildHistoryCard(
             'Magazine Subscription',
             'Annual subscription renewal',
             '₹2,400.00',
             'Mar 3, 2025',
             false,
           ),
-          _buildDateDivider('February 2025'),
-          _buildHistoryCard(
+          buildDateDivider('February 2025'),
+          buildHistoryCard(
             'Electricity Bill',
             'Monthly payment to Power Corp',
             '₹1,350.00',
             'Feb 28, 2025',
             true,
           ),
-          _buildHistoryCard(
+          buildHistoryCard(
             'Netflix Subscription',
             'Monthly subscription',
             '₹649.00',
             'Feb 15, 2025',
             true,
           ),
-          _buildHistoryCard(
+          buildHistoryCard(
             'Gym Membership',
             'Monthly membership fee',
             '₹1,800.00',
@@ -281,14 +274,14 @@ class Approvals extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
         border: Border.all(
-          color: priorityColor.withOpacity(0.3),
           width: 1,
+          color: priorityColor.withOpacity(0.3),
         ),
       ),
       child: Padding(
@@ -305,11 +298,6 @@ class Approvals extends StatelessWidget {
                     color: priorityColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  //child: Icon(
-                  //  getIconForTitle(title),
-                  //  color: priorityColor,
-                  //  size: 24,
-                  //),
                 ),
                 SizedBox(width: 15),
                 Expanded(
@@ -320,8 +308,8 @@ class Approvals extends StatelessWidget {
                         title,
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -362,8 +350,8 @@ class Approvals extends StatelessWidget {
                         amount,
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -390,8 +378,8 @@ class Approvals extends StatelessWidget {
                           type,
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
-                            fontWeight: FontWeight.w600,
                             color: Colors.blue[700],
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -421,8 +409,8 @@ class Approvals extends StatelessWidget {
                         dueDate,
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
                           color: priorityColor,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -441,9 +429,7 @@ class Approvals extends StatelessWidget {
                   ),
                   child: Text(
                     'Decline',
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -460,9 +446,7 @@ class Approvals extends StatelessWidget {
                   ),
                   child: Text(
                     'Approve',
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -473,7 +457,7 @@ class Approvals extends StatelessWidget {
     );
   }
 
-  Widget _buildHistoryCard(
+  Widget buildHistoryCard(
     String title,
     String description,
     String amount,
@@ -487,9 +471,9 @@ class Approvals extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -505,11 +489,6 @@ class Approvals extends StatelessWidget {
                     .withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              //child: Icon(
-              //  getIconForTitle(title),
-              //  color: isApproved ? Colors.green[600] : Colors.red[600],
-              //  size: 24,
-              //),
             ),
             SizedBox(width: 15),
             Expanded(
@@ -520,8 +499,8 @@ class Approvals extends StatelessWidget {
                     title,
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
                       color: Colors.grey[800],
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -539,8 +518,8 @@ class Approvals extends StatelessWidget {
                         amount,
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
@@ -584,7 +563,7 @@ class Approvals extends StatelessWidget {
     );
   }
 
-  Widget _buildDateDivider(String date) {
+  Widget buildDateDivider(String date) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -599,10 +578,7 @@ class Approvals extends StatelessWidget {
           ),
           SizedBox(width: 10),
           Expanded(
-            child: Divider(
-              color: Colors.grey[300],
-              thickness: 1,
-            ),
+            child: Divider(thickness: 1, color: Colors.grey[300]),
           ),
         ],
       ),

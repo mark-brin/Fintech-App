@@ -1,18 +1,18 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomLoader {
-  static CustomLoader? _customLoader;
-  CustomLoader._createObject();
+  static CustomLoader? customLoader;
+  CustomLoader.createObject();
   factory CustomLoader() {
-    if (_customLoader != null) {
-      return _customLoader!;
+    if (customLoader != null) {
+      return customLoader!;
     } else {
-      _customLoader = CustomLoader._createObject();
-      return _customLoader!;
+      customLoader = CustomLoader.createObject();
+      return customLoader!;
     }
   }
 
@@ -51,12 +51,16 @@ class CustomLoader {
   buildLoader(BuildContext context, {Color? backgroundColor}) {
     backgroundColor ??= const Color(0xffa8a8a8).withOpacity(.5);
     var height = 150.0;
-    var text = "Fintech App";
-    return CustomScreenLoader(
-      height: height,
-      width: height,
-      text: text,
-      backgroundColor: backgroundColor,
+    var text = "ClearPay";
+    return Scaffold(
+      body: Center(
+        child: CustomScreenLoader(
+          text: text,
+          width: height,
+          height: height,
+          backgroundColor: backgroundColor,
+        ),
+      ),
     );
   }
 }
@@ -70,7 +74,7 @@ class CustomScreenLoader extends StatelessWidget {
     super.key,
     this.width = 30,
     this.height = 30,
-    this.text = "Fintech App",
+    this.text = "ClearPay",
     this.backgroundColor = const Color(0xfff8f8f8),
   });
   @override
@@ -96,16 +100,11 @@ class CustomScreenLoader extends StatelessWidget {
                   Platform.isIOS
                       ? CupertinoActivityIndicator(radius: 35)
                       : CircularProgressIndicator(strokeWidth: 2),
-                  //Image.asset(
-                  //  width: 35,
-                  //  height: 35,
-                  //  '',
-                  //),
                 ],
               ),
               SizedBox(width: 20),
               Text(
-                'Fintech App',
+                'ClearPay',
                 style: GoogleFonts.montserrat(
                   fontSize: 23,
                   fontWeight: FontWeight.w600,
@@ -126,6 +125,61 @@ Widget loader() {
     return Center(
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+      ),
+    );
+  }
+}
+
+class Search extends StatelessWidget implements PreferredSizeWidget {
+  const Search({
+    super.key,
+    this.title,
+    this.textController,
+    this.onSearchChanged,
+    this.onActionPressed,
+    this.submitButtonText,
+  });
+  final Widget? title;
+  final String? submitButtonText;
+  final Function? onActionPressed;
+  final ValueChanged<String>? onSearchChanged;
+  final TextEditingController? textController;
+  @override
+  Size get preferredSize => Size.fromHeight(57);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      height: 50,
+      width: MediaQuery.of(context).size.width - 65,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black,
+        ),
+        borderRadius: BorderRadius.all(
+          Radius.circular(30),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BackButton(color: Colors.black),
+          Expanded(
+            child: SizedBox(
+              //width: 35,
+              child: TextField(
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  hintText: "Search by Name...",
+                  border: InputBorder.none,
+                ),
+                onChanged: onSearchChanged,
+                controller: textController,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

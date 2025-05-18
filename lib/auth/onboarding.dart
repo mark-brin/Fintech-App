@@ -1,6 +1,6 @@
-import 'package:fintech_app/state/authstate.dart';
+import 'package:clearpay/state/authstate.dart';
 import 'package:flutter/material.dart';
-import 'package:fintech_app/auth/login.dart';
+import 'package:clearpay/auth/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -40,7 +40,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthenticationState>(context, listen: false);
+    var auth = Provider.of<AuthState>(context, listen: false);
     return Scaffold(
       body: Stack(
         children: [
@@ -66,7 +66,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     },
                     itemCount: _onboardingItems.length,
                     itemBuilder: (context, index) {
-                      return _buildPage(_onboardingItems[index]);
+                      return buildPage(_onboardingItems[index]);
                     },
                   ),
                 ),
@@ -76,7 +76,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       _onboardingItems.length,
-                      (index) => _buildDot(index),
+                      (index) => buildDot(index),
                     ),
                   ),
                 ),
@@ -131,7 +131,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget _buildPage(OnboardingItem item) {
+  Widget buildPage(OnboardingItem item) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -167,10 +167,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ).createShader(bounds);
                   },
                   blendMode: BlendMode.dstIn,
-                  child: Image.asset(
-                    item.image,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.asset(item.image, fit: BoxFit.cover),
                 ),
               ),
               Positioned.fill(
@@ -198,8 +195,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
               fontSize: 28,
-              fontWeight: FontWeight.bold,
               color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -210,9 +207,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             item.subtitle,
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
+              height: 1.5,
               fontSize: 16,
               color: Colors.white.withOpacity(0.8),
-              height: 1.5,
             ),
           ),
         ),
@@ -220,7 +217,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget _buildDot(int index) {
+  Widget buildDot(int index) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
       margin: EdgeInsets.symmetric(horizontal: 5),
@@ -238,12 +235,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
 class OnboardingItem {
   final String title;
-  final String subtitle;
   final String image;
-
+  final String subtitle;
   OnboardingItem({
+    required this.image,
     required this.title,
     required this.subtitle,
-    required this.image,
   });
 }
