@@ -1,10 +1,13 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+name: Bug Report
+title: 'Bug Report'
+labels: ['Bug]
+assignees: []
+body:
+- type: textarea
+  id: name_1
+  attributes:
+    label: Name
 ---
 
 description: |
