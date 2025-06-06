@@ -8,7 +8,7 @@ body:
   id: name_1
   attributes:
     label: Name
----
+
 
 description: |
   Use this template to report a bug in [PROJECT NAME]. Please describe exactly how
@@ -113,3 +113,4 @@ body:
         ```
     validations:
       required: true
+---
