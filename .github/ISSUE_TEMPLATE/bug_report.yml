@@ -3,20 +3,10 @@ name: Bug Report
 title: 'Bug Report'
 labels: ['Bug']
 assignees: []
-body:
-- type: textarea
-  id: name_1
-  attributes:
-    label: Name
-
 
 description: |
   Use this template to report a bug in [PROJECT NAME]. Please describe exactly how
   to reproduce the issue, what you expected, and what actually happened.
-
-  # **Before filing**, check:
-  #   - That you’ve searched existing issues: https://github.com/flutter/flutter/issues
-  #   - The guide to filing a bug: https://flutter.dev/docs/resources/bug-reports
 
 body:
   - type: markdown
